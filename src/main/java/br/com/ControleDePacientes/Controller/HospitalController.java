@@ -19,6 +19,11 @@ public class HospitalController {
         return hospitalService.saveHospital(hospital);
     }
 
+    @PutMapping("/update/{id}")
+    public HospitalModel updateHospital(@PathVariable Long id, @RequestBody HospitalModel hospital){
+        return hospitalService.updateHospital(id, hospital);
+    }
+
     @GetMapping
     public List<HospitalModel> listHospitals(){
         return hospitalService.listHospitals();
@@ -29,7 +34,7 @@ public class HospitalController {
         return hospitalService.findHospitalById(id);
     }
 
-    @GetMapping("/{name}")
+    @GetMapping("/name/{name}")
     public List<HospitalModel> findHospitalByName(@PathVariable String name){
         return  hospitalService.findHospitalByName(name);
     }

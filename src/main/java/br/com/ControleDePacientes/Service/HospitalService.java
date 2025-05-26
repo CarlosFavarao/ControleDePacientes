@@ -17,6 +17,17 @@ public class HospitalService {
         return hospitalRepository.save(hospital);
     }
 
+    public HospitalModel updateHospital(Long id, HospitalModel updatedHospital){
+        Optional<HospitalModel> currentHospital = hospitalRepository.findById(id);
+
+        if(currentHospital.isPresent()){
+            HospitalModel hospital = currentHospital.get();
+            hospital.setName(updatedHospital.getName());
+            return hospitalRepository.save(hospital);
+        }
+        return null;
+    }
+
     public List<HospitalModel> listHospitals(){
         return hospitalRepository.findAll();
     }
