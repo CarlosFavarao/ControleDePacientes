@@ -1,6 +1,6 @@
-package br.com.ControleDePacientes.Controller;
+package br.com.ControleDePacientes.controller;
 
-import br.com.ControleDePacientes.Service.HospitalService;
+import br.com.ControleDePacientes.service.HospitalService;
 import br.com.ControleDePacientes.model.HospitalModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

@@ -1,4 +1,4 @@
-package br.com.ControleDePacientes.Service;
+package br.com.ControleDePacientes.service;
 
 import br.com.ControleDePacientes.model.HospitalModel;
 import br.com.ControleDePacientes.repository.HospitalRepository;
