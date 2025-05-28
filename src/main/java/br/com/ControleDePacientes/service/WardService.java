@@ -1,7 +1,6 @@
 package br.com.ControleDePacientes.service;
 
 import br.com.ControleDePacientes.dto.WardCreateRequestDTO;
-import br.com.ControleDePacientes.dto.WardResponseDTO;
 import br.com.ControleDePacientes.enums.BedStatus;
 import br.com.ControleDePacientes.enums.RoomStatus;
 import br.com.ControleDePacientes.model.BedModel;
@@ -19,8 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class WardService {
@@ -72,19 +69,12 @@ public class WardService {
     }
 
     @Transactional
-    public List<WardResponseDTO> findAllWards() {
-        List<WardModel> wards = wardRepository.findAll();
-
-        return wards.stream()
-                .map(WardResponseDTO::new)
-                .collect(Collectors.toList());
+    public List<WardModel> findAllWards() {
+        return wardRepository.findAll();
     }
 
     @Transactional
-    public Optional<WardResponseDTO> findWardById(Long id) {
-        Optional<WardModel> wardOptional = wardRepository.findById(id);
-
-        return wardOptional.map(WardResponseDTO::new);
+    public WardModel findWardById(Long id) {
+        return wardRepository.findById(id).orElseThrow(() -> new RuntimeException("Ala não encontrada."));
     }
-
 }

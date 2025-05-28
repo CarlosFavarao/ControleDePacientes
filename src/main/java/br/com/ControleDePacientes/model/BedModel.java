@@ -23,11 +23,11 @@ public class BedModel {
     @Column(nullable = false, length = 50)
     private BedStatus status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "room_id", nullable = false)
     private RoomModel room;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "patient_id", nullable = true)
     private PatientModel patient;
 }

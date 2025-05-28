@@ -19,7 +19,7 @@ public class WardModel {
     @Column(nullable = false)
     private SpecialtyEnum specialty;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "hospital_id", nullable = false)
     private HospitalModel hospital;
 }

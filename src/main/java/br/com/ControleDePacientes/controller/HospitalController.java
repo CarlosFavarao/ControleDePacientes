@@ -16,32 +16,32 @@ public class HospitalController {
 
     @PostMapping
     public HospitalModel saveHospital(@RequestBody HospitalModel hospital){
-        return hospitalService.saveHospital(hospital);
+        return this.hospitalService.saveHospital(hospital);
     }
 
     @PutMapping("/update/{id}")
     public HospitalModel updateHospital(@PathVariable Long id, @RequestBody HospitalModel hospital){
-        return hospitalService.updateHospital(id, hospital);
+        return this.hospitalService.updateHospital(id, hospital);
     }
 
     @GetMapping
     public List<HospitalModel> listHospitals(){
-        return hospitalService.listHospitals();
+        return this.hospitalService.listHospitals();
     }
 
     @GetMapping("/id/{id}")
     public Optional<HospitalModel> findHospitalById(@PathVariable Long id){
-        return hospitalService.findHospitalById(id);
+        return this.hospitalService.findHospitalById(id);
     }
 
     @GetMapping("/name/{name}")
     public List<HospitalModel> findHospitalByName(@PathVariable String name){
-        return  hospitalService.findHospitalByName(name);
+        return  this.hospitalService.findHospitalByName(name);
     }
 
     @DeleteMapping("/delete/{id}")
-    public void deleteHospital(@PathVariable Long id){ //posso, futuramente, deletar por nome também... (talvez com o RequestParam diferente e um retorno de um FindByName)
-        hospitalService.deleteHospital(id);
+    public void deleteHospital(@PathVariable Long id){
+        this.hospitalService.deleteHospital(id);
     }
 
 }

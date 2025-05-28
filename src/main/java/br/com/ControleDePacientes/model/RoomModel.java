@@ -17,13 +17,13 @@ public class RoomModel {
     private Long id;
 
     @Column(nullable = false, unique = true, length = 50)
-    private String Code;
+    private String code;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
     private RoomStatus status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "ward_id", nullable = false)
     private WardModel ward;
 
