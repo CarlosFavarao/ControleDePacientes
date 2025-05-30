@@ -1,11 +1,12 @@
 package br.com.ControleDePacientes.service;
 
 import br.com.ControleDePacientes.dto.AdmissionRequestDTO;
+import br.com.ControleDePacientes.dto.PatientLocationDTO;
 import br.com.ControleDePacientes.enums.BedStatus;
 import br.com.ControleDePacientes.model.*;
 import br.com.ControleDePacientes.repository.*;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,7 @@ public class AdmissionService {
     @Autowired private BedRepository bedRepository;
     @Autowired private AdmissionLogRepository admissionLogRepository;
 
+    //Admitir um paciente (vai ser alterado futuramente, mas funciona)
     @Transactional
     public AdmissionLogModel admitPatient(AdmissionRequestDTO admissionRequest){
         if (admissionRequest.getPatientId() == null || admissionRequest.getSpecialty() == null) {
@@ -76,5 +78,9 @@ public class AdmissionService {
         return admissionLogRepository.save(admissionLog);
     }
 
+    @Transactional(readOnly = true)
+    public Optional<PatientLocationDTO> findPatientLocation(Long patientId) {
+        return admissionLogRepository.findPatientLocationDetails(patientId);
+    }
 
 }

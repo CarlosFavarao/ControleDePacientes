@@ -15,7 +15,7 @@ public interface WardRepository extends JpaRepository<WardModel, Long> {
                     "w.specialty AS specialty, " +
                     "CAST(COUNT(b.id) AS BIGINT) AS totalBeds, " +                                             //Estudar depois!
                     "CAST(SUM(CASE WHEN b.status = 'AVAILABLE' THEN 1 ELSE 0 END) AS BIGINT) AS freeBeds,  " + //Aprender melhor sobre as queries, ainda não consigo fazer elas sozinho.
-                    "CAST(SUM(CASE WHEN b.status = 'OCUPIED' THEN 1 ELSE 0 END) AS BIGINT) AS occupiedBeds " +
+                    "CAST(SUM(CASE WHEN b.status = 'OCCUPIED' THEN 1 ELSE 0 END) AS BIGINT) AS occupiedBeds " +
                     "FROM wards w " +
                     "JOIN rooms r ON w.id = r.ward_id " +
                     "JOIN beds b ON r.id = b.room_id " +
