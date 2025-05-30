@@ -22,4 +22,10 @@ public interface WardRepository extends JpaRepository<WardModel, Long> {
                     "GROUP BY w.specialty",
                     nativeQuery = true)
     List<SpecialtyBedStatsDTO> getBedStatsBySpecialty();
+
+    @Query("SELECT DISTINCT w FROM WardModel w " +
+            "LEFT JOIN FETCH w.hospital " +
+            "LEFT JOIN FETCH w.rooms r " +
+            "LEFT JOIN FETCH r.beds b")
+    List<WardModel> findAllWithRoomsAndBeds();
 }

@@ -4,6 +4,9 @@ import br.com.ControleDePacientes.enums.RoomStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "rooms")
 @Getter //Optei por começar a usá-los individualmente, O @Data pode ser
@@ -23,9 +26,10 @@ public class RoomModel {
     @Column(nullable = false, length = 50)
     private RoomStatus status;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ward_id", nullable = false)
     private WardModel ward;
 
-    //podem haver adições futuras...
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<BedModel> beds = new HashSet<>(); //Para lidar com tabela hash, assim como no Ward
 }

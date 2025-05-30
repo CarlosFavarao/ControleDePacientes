@@ -1,6 +1,7 @@
 package br.com.ControleDePacientes.controller;
 
 import br.com.ControleDePacientes.dto.SpecialtyBedStatsDTO;
+import br.com.ControleDePacientes.dto.SpecialtyRoomStatsDTO;
 import br.com.ControleDePacientes.dto.WardCreateRequestDTO;
 import br.com.ControleDePacientes.model.WardModel;
 import br.com.ControleDePacientes.service.WardService;
@@ -35,6 +36,12 @@ public class WardController {
     @GetMapping("/stats/beds-by-specialty") //Quantidade de leitos livres por cada especialidade (posso adaptar para ficar melhor)
     public ResponseEntity<List<SpecialtyBedStatsDTO>> getBedStatsBySpecialty(){
         List<SpecialtyBedStatsDTO> stats = wardService.getBedStatsBySpecialty();
+        return ResponseEntity.ok(stats);
+    }
+
+    @GetMapping("/stats/room-stats-by-specialty")
+    public ResponseEntity<List<SpecialtyRoomStatsDTO>> getRoomStatsBySpecialty() {
+        List<SpecialtyRoomStatsDTO> stats = wardService.getRoomStatsBySpecialty();
         return ResponseEntity.ok(stats);
     }
 }

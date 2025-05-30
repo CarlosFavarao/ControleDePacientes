@@ -1,9 +1,11 @@
 package br.com.ControleDePacientes.service;
 
 import br.com.ControleDePacientes.dto.SpecialtyBedStatsDTO;
+import br.com.ControleDePacientes.dto.SpecialtyRoomStatsDTO;
 import br.com.ControleDePacientes.dto.WardCreateRequestDTO;
 import br.com.ControleDePacientes.enums.BedStatus;
 import br.com.ControleDePacientes.enums.RoomStatus;
+import br.com.ControleDePacientes.enums.SpecialtyEnum;
 import br.com.ControleDePacientes.model.BedModel;
 import br.com.ControleDePacientes.model.HospitalModel;
 import br.com.ControleDePacientes.model.RoomModel;
@@ -17,7 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class WardService {
@@ -81,5 +85,54 @@ public class WardService {
     public List<SpecialtyBedStatsDTO> getBedStatsBySpecialty(){
         return wardRepository.getBedStatsBySpecialty();
     }
+
+
+    public List<SpecialtyRoomStatsDTO> getRoomStatsBySpecialty() {
+        List<WardModel> wardsWithDetails = wardRepository.findAllWithRoomsAndBeds();
+        Map<SpecialtyEnum, RoomStatsAggregator> statsMap = new HashMap<>();
+
+        for (WardModel ward : wardsWithDetails) {
+            SpecialtyEnum specialty = ward.getSpecialty();
+            RoomStatsAggregator aggregator = statsMap.computeIfAbsent(specialty, k -> new RoomStatsAggregator());
+
+            for (RoomModel room : ward.getRooms()) {
+                aggregator.totalRooms++;
+
+                boolean isRoomOccupiedByPatient = false;
+                if (room.getBeds() != null && !room.getBeds().isEmpty()) {
+                    for (BedModel bed : room.getBeds()) {
+                        if (bed.getStatus() == BedStatus.OCCUPIED) { //
+                            isRoomOccupiedByPatient = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (isRoomOccupiedByPatient) {
+                    aggregator.occupiedRooms++;
+                } else {
+                    aggregator.freeRooms++;
+                }
+            }
+        }
+
+        List<SpecialtyRoomStatsDTO> result = new ArrayList<>();
+        for (Map.Entry<SpecialtyEnum, RoomStatsAggregator> entry : statsMap.entrySet()) {
+            result.add(new SpecialtyRoomStatsDTO(
+                    entry.getKey(),
+                    entry.getValue().totalRooms,
+                    entry.getValue().freeRooms,
+                    entry.getValue().occupiedRooms
+            ));
+        }
+        return result;
+    }
+
+    private static class RoomStatsAggregator {
+        long totalRooms = 0;
+        long freeRooms = 0;
+        long occupiedRooms = 0;
+    }
+
 
 }
