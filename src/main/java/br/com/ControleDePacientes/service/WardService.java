@@ -1,5 +1,6 @@
 package br.com.ControleDePacientes.service;
 
+import br.com.ControleDePacientes.dto.SpecialtyBedStatsDTO;
 import br.com.ControleDePacientes.dto.WardCreateRequestDTO;
 import br.com.ControleDePacientes.enums.BedStatus;
 import br.com.ControleDePacientes.enums.RoomStatus;
@@ -12,10 +13,9 @@ import br.com.ControleDePacientes.repository.HospitalRepository;
 import br.com.ControleDePacientes.repository.RoomRepository;
 import br.com.ControleDePacientes.repository.WardRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,8 +73,13 @@ public class WardService {
         return wardRepository.findAll();
     }
 
-    @Transactional
+    @Transactional //LEmbrar de importar o do Spring e não o do Jakarta
     public WardModel findWardById(Long id) {
         return wardRepository.findById(id).orElseThrow(() -> new RuntimeException("Ala não encontrada."));
     }
+
+    public List<SpecialtyBedStatsDTO> getBedStatsBySpecialty(){
+        return wardRepository.getBedStatsBySpecialty();
+    }
+
 }

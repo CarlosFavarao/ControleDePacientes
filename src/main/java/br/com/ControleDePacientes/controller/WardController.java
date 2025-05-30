@@ -1,5 +1,6 @@
 package br.com.ControleDePacientes.controller;
 
+import br.com.ControleDePacientes.dto.SpecialtyBedStatsDTO;
 import br.com.ControleDePacientes.dto.WardCreateRequestDTO;
 import br.com.ControleDePacientes.model.WardModel;
 import br.com.ControleDePacientes.service.WardService;
@@ -29,5 +30,11 @@ public class WardController {
     @GetMapping("/{id}")
     public ResponseEntity<WardModel> findWardById(@PathVariable Long id) {
         return ResponseEntity.ok(this.wardService.findWardById(id));
+    }
+
+    @GetMapping("/stats/beds-by-specialty")
+    public ResponseEntity<List<SpecialtyBedStatsDTO>> getBedStatsBySpecialty(){
+        List<SpecialtyBedStatsDTO> stats = wardService.getBedStatsBySpecialty();
+        return ResponseEntity.ok(stats);
     }
 }

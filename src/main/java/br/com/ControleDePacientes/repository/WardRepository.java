@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface WardRepository extends JpaRepository<WardModel, Long> {
 
-    @Query(value = "SELECT" +
+    @Query(value = "SELECT " +
                     "w.specialty AS specialty, " +
                     "CAST(COUNT(b.id) AS BIGINT) AS totalBeds, " +                                             //Estudar depois!
                     "CAST(SUM(CASE WHEN b.status = 'AVAILABLE' THEN 1 ELSE 0 END) AS BIGINT) AS freeBeds,  " + //Aprender melhor sobre as queries, ainda não consigo fazer elas sozinho.
