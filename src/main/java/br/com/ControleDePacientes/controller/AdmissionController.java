@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/admission")
+@RequestMapping("/adm")
 public class AdmissionController {
     @Autowired
     private AdmissionService admissionService;
@@ -20,7 +20,7 @@ public class AdmissionController {
     }
 
     @GetMapping("/patient-location/{patientId}")
-    public ResponseEntity<PatientLocationDTO> getPatientLocation(@PathVariable Long patientId) {
+    public ResponseEntity<PatientLocationDTO> getPatientLocation(@PathVariable Long patientId) { //Se não estiver fazendo sentido, posso mover para patient
         return admissionService.findPatientLocation(patientId).map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }

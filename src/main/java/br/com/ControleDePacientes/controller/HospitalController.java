@@ -1,8 +1,11 @@
 package br.com.ControleDePacientes.controller;
 
+import br.com.ControleDePacientes.dto.BedResponseDTO;
+import br.com.ControleDePacientes.service.BedService;
 import br.com.ControleDePacientes.service.HospitalService;
 import br.com.ControleDePacientes.model.HospitalModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,8 +14,8 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/hospitals")
 public class HospitalController {
-    @Autowired
-    HospitalService hospitalService;
+    @Autowired HospitalService hospitalService;
+    @Autowired BedService bedService;
 
     @PostMapping
     public HospitalModel saveHospital(@RequestBody HospitalModel hospital){
@@ -29,12 +32,18 @@ public class HospitalController {
         return this.hospitalService.listHospitals();
     }
 
-    @GetMapping("/id/{id}")
+    @GetMapping("/{id}")
     public Optional<HospitalModel> findHospitalById(@PathVariable Long id){
         return this.hospitalService.findHospitalById(id);
     }
 
-    @GetMapping("/name/{name}")
+    @GetMapping("/{hospitalId}/beds") //exibir camas do hospital
+    public ResponseEntity<List<BedResponseDTO>> getBedsByHospitalId(@PathVariable Long hospitalId){
+        List<BedResponseDTO> beds = bedService.findBedsByHospitalId(hospitalId);
+        return ResponseEntity.ok(beds);
+    }
+
+    @GetMapping("/{name}")
     public List<HospitalModel> findHospitalByName(@PathVariable String name){
         return  this.hospitalService.findHospitalByName(name);
     }
