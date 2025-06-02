@@ -1,6 +1,7 @@
 package br.com.ControleDePacientes.controller;
 
 import br.com.ControleDePacientes.dto.AdmissionRequestDTO;
+import br.com.ControleDePacientes.dto.AdmissionResponseDTO;
 import br.com.ControleDePacientes.dto.PatientLocationDTO;
 import br.com.ControleDePacientes.model.AdmissionLogModel;
 import br.com.ControleDePacientes.service.AdmissionService;
@@ -14,14 +15,19 @@ public class AdmissionController {
     @Autowired
     private AdmissionService admissionService;
 
-    @PostMapping
-    public AdmissionLogModel admitPatient(@RequestBody AdmissionRequestDTO admissionRequest) {
+    @PostMapping //Internar
+    public AdmissionResponseDTO admitPatient(@RequestBody AdmissionRequestDTO admissionRequest) {
         return admissionService.admitPatient(admissionRequest);
     }
 
-    @GetMapping("/patient-location/{patientId}")
+    @GetMapping("/patient-location/{patientId}") //Encontrar
     public ResponseEntity<PatientLocationDTO> getPatientLocation(@PathVariable Long patientId) { //Se não estiver fazendo sentido, posso mover para patient
         return admissionService.findPatientLocation(patientId).map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/discharge/{patientId}") //Dar alta
+    public AdmissionLogModel dischargePatient(@PathVariable Long patientId){
+        return admissionService.dischargePatient(patientId);
     }
 }

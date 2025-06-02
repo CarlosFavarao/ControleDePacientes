@@ -22,4 +22,10 @@ public interface AdmissionLogRepository extends JpaRepository<AdmissionLogModel,
             "JOIN w.hospital h " +
             "WHERE p.id = :patientId AND al.dischargeDate IS NULL")
     Optional<PatientLocationDTO> findPatientLocationDetails(@Param("patientId") Long patientId);
+
+    @Query("SELECT al FROM AdmissionLogModel al " +
+            "JOIN FETCH al.patient p " +
+            "JOIN FETCH al.bed b " +
+            "WHERE p.id = :patientId AND al.dischargeDate IS NULL")
+    Optional<AdmissionLogModel> findActiveAdmissionByPatientId(@Param("patientId") Long patientId);
 }

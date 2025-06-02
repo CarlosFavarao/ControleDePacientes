@@ -1,6 +1,7 @@
 package br.com.ControleDePacientes.service;
 
 import br.com.ControleDePacientes.dto.AdmissionRequestDTO;
+import br.com.ControleDePacientes.dto.AdmissionResponseDTO;
 import br.com.ControleDePacientes.dto.PatientLocationDTO;
 import br.com.ControleDePacientes.enums.BedStatus;
 import br.com.ControleDePacientes.model.*;
@@ -25,7 +26,7 @@ public class AdmissionService {
 
     //Admitir um paciente (vai ser alterado futuramente, mas funciona)
     @Transactional
-    public AdmissionLogModel admitPatient(AdmissionRequestDTO admissionRequest){
+    public AdmissionResponseDTO admitPatient(AdmissionRequestDTO admissionRequest){
         if (admissionRequest.getPatientId() == null || admissionRequest.getSpecialty() == null) {
             throw new IllegalArgumentException("ID do Paciente e Especialidade são obrigatórios.");
         }
@@ -75,12 +76,27 @@ public class AdmissionService {
         admissionLog.setAdmissionDate(LocalDateTime.now());
         admissionLog.setDischargeDate(null);
 
-        return admissionLogRepository.save(admissionLog);
+        AdmissionLogModel savedLog = admissionLogRepository.save(admissionLog);
+        return new AdmissionResponseDTO(savedLog); // << MUDANÇA AQUI
     }
 
-    @Transactional(readOnly = true)
-    public Optional<PatientLocationDTO> findPatientLocation(Long patientId) {
+    public Optional<PatientLocationDTO> findPatientLocation(Long patientId) { //Encontrar paciente
         return admissionLogRepository.findPatientLocationDetails(patientId);
     }
 
+    //Dar alta
+    @Transactional
+    public AdmissionLogModel dischargePatient(Long patientId){
+        AdmissionLogModel activeAdmission = admissionLogRepository.findActiveAdmissionByPatientId(patientId).orElseThrow(() -> new RuntimeException("Internação não encontrada"));
+
+        activeAdmission.setDischargeDate(LocalDateTime.now());
+        AdmissionLogModel updatedAdmissionLog = admissionLogRepository.save(activeAdmission);
+
+        BedModel bed = activeAdmission.getBed();
+        bed.setPatient(null);
+        bed.setStatus(BedStatus.AVAILABLE);
+        bedRepository.save(bed);
+
+        return updatedAdmissionLog;
+    }
 }
