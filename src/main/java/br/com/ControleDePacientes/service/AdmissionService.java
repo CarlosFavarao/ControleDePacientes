@@ -2,8 +2,10 @@ package br.com.ControleDePacientes.service;
 
 import br.com.ControleDePacientes.dto.admission.AdmissionRequestDTO;
 import br.com.ControleDePacientes.dto.admission.AdmissionResponseDTO;
+import br.com.ControleDePacientes.dto.admission.AdmittedPatientDTO;
 import br.com.ControleDePacientes.dto.patient.PatientLocationDTO;
 import br.com.ControleDePacientes.enums.BedStatus;
+import br.com.ControleDePacientes.enums.SpecialtyEnum;
 import br.com.ControleDePacientes.model.*;
 import br.com.ControleDePacientes.repository.*;
 import jakarta.persistence.EntityNotFoundException;
@@ -12,8 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 
 @Service
 public class AdmissionService {
@@ -98,5 +100,31 @@ public class AdmissionService {
         bedRepository.save(bed);
 
         return updatedAdmissionLog;
+    }
+
+    //Retornar todos os pacientes internados, em ordem alfabética e agrupados por especialidade.
+    public Map<SpecialtyEnum, List<AdmittedPatientDTO>> getCurrentlyAdmittedPatients(){
+        List<AdmissionLogModel> activeAdmissions = admissionLogRepository.findActiveAdmissions();
+
+        //Árvore para deixar especialidades já ordenadas
+        Map<SpecialtyEnum, List<AdmittedPatientDTO>> reportMap = new TreeMap<>();
+
+        for (AdmissionLogModel log : activeAdmissions){
+            String patientName = log.getPatient().getName();
+            SpecialtyEnum specialty = log.getBed().getRoom().getWard().getSpecialty();
+            LocalDateTime admissionDate = log.getAdmissionDate();
+            long daysAdmitted = ChronoUnit.DAYS.between(admissionDate,LocalDateTime.now());
+
+            AdmittedPatientDTO dto = new AdmittedPatientDTO(patientName, specialty, admissionDate, daysAdmitted);
+
+            //Esse compute if absent garante que seja criado, mesmo que seja a primeira vez por especialidade
+            reportMap.computeIfAbsent(specialty, k -> new ArrayList<>()).add(dto);
+        }
+
+        for (List<AdmittedPatientDTO> patientDTOList : reportMap.values()){
+            patientDTOList.sort(Comparator.comparing(AdmittedPatientDTO::getPatientName));
+        }
+
+        return reportMap;
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -28,4 +29,14 @@ public interface AdmissionLogRepository extends JpaRepository<AdmissionLogModel,
             "JOIN FETCH al.bed b " +
             "WHERE p.id = :patientId AND al.dischargeDate IS NULL")
     Optional<AdmissionLogModel> findActiveAdmissionByPatientId(@Param("patientId") Long patientId);
+
+    //Listar todos os pacientes internados no momento.
+    @Query("SELECT al FROM AdmissionLogModel al " +
+            "JOIN FETCH al.patient p " +
+            "JOIN FETCH al.bed b " +
+            "JOIN FETCH b.room r " +
+            "JOIN FETCH r.ward w " +
+            "WHERE al.dischargeDate IS NULL")
+    List<AdmissionLogModel> findActiveAdmissions();
+
 }
