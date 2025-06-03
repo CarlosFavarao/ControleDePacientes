@@ -1,18 +1,18 @@
 package br.com.ControleDePacientes.repository;
 
-import br.com.ControleDePacientes.dto.PatientLocationDTO;
+import br.com.ControleDePacientes.dto.patient.PatientLocationDTO;
 import br.com.ControleDePacientes.model.AdmissionLogModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import java.time.LocalDateTime;
+
 import java.util.Optional;
 
 
 public interface AdmissionLogRepository extends JpaRepository<AdmissionLogModel, Long> {
 
     //Mostrar quarto que paciente está internado. Passou por alguns refinos antes de ir pro commit (pra função na service não ficar gigante!!)
-    @Query("SELECT new br.com.ControleDePacientes.dto.PatientLocationDTO(" +
+    @Query("SELECT new br.com.ControleDePacientes.dto.patient.PatientLocationDTO(" +
             "    p.id, p.name, h.name, w.specialty, r.code, b.code, al.admissionDate) " +
             "FROM AdmissionLogModel al " +
             "JOIN al.patient p " +

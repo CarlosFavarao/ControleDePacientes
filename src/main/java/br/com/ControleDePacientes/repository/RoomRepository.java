@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RoomRepository extends JpaRepository <RoomModel, Long> {
-    //Vão haver adições futuras...
+    //Melhoria na criação de quartos, para criar com prefixos corretos
+    long countByCodeStartingWith(String prefix);
 }

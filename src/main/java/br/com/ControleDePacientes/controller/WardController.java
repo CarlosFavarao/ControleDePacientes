@@ -1,8 +1,9 @@
 package br.com.ControleDePacientes.controller;
 
-import br.com.ControleDePacientes.dto.SpecialtyBedStatsDTO;
-import br.com.ControleDePacientes.dto.SpecialtyRoomStatsDTO;
-import br.com.ControleDePacientes.dto.WardCreateRequestDTO;
+import br.com.ControleDePacientes.dto.specialty.SpecialtyBedStatsDTO;
+import br.com.ControleDePacientes.dto.specialty.SpecialtyRoomStatsDTO;
+import br.com.ControleDePacientes.dto.wards.WardCreateRequestDTO;
+import br.com.ControleDePacientes.dto.wards.WardResponseDTO;
 import br.com.ControleDePacientes.model.WardModel;
 import br.com.ControleDePacientes.service.WardService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +24,15 @@ public class WardController {
     }
 
     @GetMapping
-    public ResponseEntity<List<WardModel>> getAllWards() {
-        List<WardModel> wards = this.wardService.findAllWards();
+    public ResponseEntity<List<WardResponseDTO>> getAllWards() {
+        List<WardResponseDTO> wards = this.wardService.findAllWards();
         return ResponseEntity.ok(wards);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<WardModel> findWardById(@PathVariable Long id) {
-        return ResponseEntity.ok(this.wardService.findWardById(id));
+    public ResponseEntity<WardResponseDTO> findWardById(@PathVariable Long id) {
+        return this.wardService.findWardById(id).map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/stats/beds-by-specialty") //Quantidade de leitos livres por cada especialidade (posso adaptar para ficar melhor)

@@ -1,4 +1,4 @@
-package br.com.ControleDePacientes.dto;
+package br.com.ControleDePacientes.dto.beds;
 
 import br.com.ControleDePacientes.enums.BedStatus;
 import br.com.ControleDePacientes.model.BedModel;

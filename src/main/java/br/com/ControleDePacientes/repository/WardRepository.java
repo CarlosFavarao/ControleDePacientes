@@ -1,6 +1,6 @@
 package br.com.ControleDePacientes.repository;
 
-import br.com.ControleDePacientes.dto.SpecialtyBedStatsDTO;
+import br.com.ControleDePacientes.dto.specialty.SpecialtyBedStatsDTO;
 import br.com.ControleDePacientes.model.WardModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

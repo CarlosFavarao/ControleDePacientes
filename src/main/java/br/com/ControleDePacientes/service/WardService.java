@@ -1,8 +1,9 @@
 package br.com.ControleDePacientes.service;
 
-import br.com.ControleDePacientes.dto.SpecialtyBedStatsDTO;
-import br.com.ControleDePacientes.dto.SpecialtyRoomStatsDTO;
-import br.com.ControleDePacientes.dto.WardCreateRequestDTO;
+import br.com.ControleDePacientes.dto.specialty.SpecialtyBedStatsDTO;
+import br.com.ControleDePacientes.dto.specialty.SpecialtyRoomStatsDTO;
+import br.com.ControleDePacientes.dto.wards.WardCreateRequestDTO;
+import br.com.ControleDePacientes.dto.wards.WardResponseDTO;
 import br.com.ControleDePacientes.enums.BedStatus;
 import br.com.ControleDePacientes.enums.RoomStatus;
 import br.com.ControleDePacientes.enums.SpecialtyEnum;
@@ -18,10 +19,9 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class WardService {
@@ -48,13 +48,14 @@ public class WardService {
         WardModel savedWard = wardRepository.save(newWard);
 
         String prefix = savedWard.getSpecialty().getPrefix();
-        List<RoomModel> createdRooms = new ArrayList<>();
-        List<BedModel> createdBeds = new ArrayList<>();
+
+        long existingRoomsWithPrefixCount = roomRepository.countByCodeStartingWith(prefix);
 
         for (int i = 1; i <= dto.getNumberOfRooms(); i++){ //Cria os quartos
             RoomModel newRoom = new RoomModel();
-            String roomCode = prefix + i; //Para o código ser gerado já com o Prefixo definido...
-            newRoom.setCode(roomCode);
+            long currentRoomNumber = existingRoomsWithPrefixCount + i;
+            String roomCode = prefix + currentRoomNumber; //Para o código ser gerado já com o Prefixo definido...
+            newRoom.setCode(roomCode);                    //Se já existirem quartos com o prefixo e só forem adicionados mais, cria com os prefixos certos.
             newRoom.setStatus(RoomStatus.ACTIVE);
             newRoom.setWard(savedWard);
             RoomModel savedRoom = roomRepository.save(newRoom);
@@ -66,20 +67,19 @@ public class WardService {
                 newBed.setStatus(BedStatus.AVAILABLE);
                 newBed.setRoom(savedRoom);
                 newBed.setPatient(null); //Null = sem paciente
-                createdBeds.add(bedRepository.save(newBed));
+                bedRepository.save(newBed);
             }
         }
         return savedWard;
     }
 
-    @Transactional
-    public List<WardModel> findAllWards() {
-        return wardRepository.findAll();
+    public List<WardResponseDTO> findAllWards() {
+        List<WardModel> wards = wardRepository.findAll();
+        return wards.stream().map(WardResponseDTO::new).collect(Collectors.toList());
     }
 
-    @Transactional //LEmbrar de importar o do Spring e não o do Jakarta
-    public WardModel findWardById(Long id) {
-        return wardRepository.findById(id).orElseThrow(() -> new RuntimeException("Ala não encontrada."));
+    public Optional<WardResponseDTO> findWardById(Long id) {
+        return wardRepository.findById(id).map(WardResponseDTO::new);
     }
 
     public List<SpecialtyBedStatsDTO> getBedStatsBySpecialty(){

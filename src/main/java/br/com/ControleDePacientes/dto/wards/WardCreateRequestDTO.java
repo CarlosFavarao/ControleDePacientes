@@ -1,4 +1,4 @@
-package br.com.ControleDePacientes.dto;
+package br.com.ControleDePacientes.dto.wards;
 
 import br.com.ControleDePacientes.enums.SpecialtyEnum;
 import lombok.Data;

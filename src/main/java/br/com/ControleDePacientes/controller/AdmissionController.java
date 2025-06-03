@@ -1,8 +1,8 @@
 package br.com.ControleDePacientes.controller;
 
-import br.com.ControleDePacientes.dto.AdmissionRequestDTO;
-import br.com.ControleDePacientes.dto.AdmissionResponseDTO;
-import br.com.ControleDePacientes.dto.PatientLocationDTO;
+import br.com.ControleDePacientes.dto.admission.AdmissionRequestDTO;
+import br.com.ControleDePacientes.dto.admission.AdmissionResponseDTO;
+import br.com.ControleDePacientes.dto.patient.PatientLocationDTO;
 import br.com.ControleDePacientes.model.AdmissionLogModel;
 import br.com.ControleDePacientes.service.AdmissionService;
 import org.springframework.beans.factory.annotation.Autowired;
