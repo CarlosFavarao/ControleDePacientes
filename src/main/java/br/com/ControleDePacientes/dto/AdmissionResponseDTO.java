@@ -1,4 +1,4 @@
-package br.com.ControleDePacientes.dto.admission;
+package br.com.ControleDePacientes.dto;
 
 import br.com.ControleDePacientes.model.AdmissionLogModel;
 import lombok.Data;

@@ -1,9 +1,9 @@
 package br.com.ControleDePacientes.controller;
 
-import br.com.ControleDePacientes.dto.specialty.SpecialtyBedStatsDTO;
-import br.com.ControleDePacientes.dto.specialty.SpecialtyRoomStatsDTO;
-import br.com.ControleDePacientes.dto.wards.WardCreateRequestDTO;
-import br.com.ControleDePacientes.dto.wards.WardResponseDTO;
+import br.com.ControleDePacientes.dto.SpecialtyBedStatsDTO;
+import br.com.ControleDePacientes.dto.SpecialtyRoomStatsDTO;
+import br.com.ControleDePacientes.dto.WardCreateRequestDTO;
+import br.com.ControleDePacientes.dto.WardResponseDTO;
 import br.com.ControleDePacientes.model.WardModel;
 import br.com.ControleDePacientes.service.WardService;
 import org.springframework.beans.factory.annotation.Autowired;

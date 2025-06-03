@@ -1,4 +1,4 @@
-package br.com.ControleDePacientes.dto.wards;
+package br.com.ControleDePacientes.dto;
 
 import br.com.ControleDePacientes.model.WardModel;
 import br.com.ControleDePacientes.enums.SpecialtyEnum;

@@ -1,6 +1,6 @@
 package br.com.ControleDePacientes.service;
 
-import br.com.ControleDePacientes.dto.beds.BedResponseDTO;
+import br.com.ControleDePacientes.dto.BedResponseDTO;
 import br.com.ControleDePacientes.model.BedModel;
 import br.com.ControleDePacientes.repository.BedRepository;
 import org.springframework.beans.factory.annotation.Autowired;

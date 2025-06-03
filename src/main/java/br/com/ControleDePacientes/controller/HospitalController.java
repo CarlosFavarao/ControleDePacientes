@@ -1,6 +1,6 @@
 package br.com.ControleDePacientes.controller;
 
-import br.com.ControleDePacientes.dto.beds.BedResponseDTO;
+import br.com.ControleDePacientes.dto.BedResponseDTO;
 import br.com.ControleDePacientes.service.BedService;
 import br.com.ControleDePacientes.service.HospitalService;
 import br.com.ControleDePacientes.model.HospitalModel;

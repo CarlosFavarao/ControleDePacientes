@@ -1,5 +1,6 @@
 package br.com.ControleDePacientes.controller;
 
+import br.com.ControleDePacientes.dto.AvailableRoomDTO;
 import br.com.ControleDePacientes.model.RoomModel;
 import br.com.ControleDePacientes.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,5 +27,11 @@ public class RoomController {
     public ResponseEntity<RoomModel> findByRoomId(@PathVariable Long id){
         return roomService.findRoomById(id).map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/available")
+    public ResponseEntity<List<AvailableRoomDTO>> getAvailableRooms(){
+        List<AvailableRoomDTO> availableRooms = roomService.findRoomsWithAvailableBeds();
+        return  ResponseEntity.ok(availableRooms);
     }
 }
