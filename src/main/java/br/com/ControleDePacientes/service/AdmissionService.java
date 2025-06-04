@@ -5,7 +5,6 @@ import br.com.ControleDePacientes.dto.AdmissionResponseDTO;
 import br.com.ControleDePacientes.dto.AdmittedPatientDTO;
 import br.com.ControleDePacientes.dto.PatientLocationDTO;
 import br.com.ControleDePacientes.enums.BedStatus;
-import br.com.ControleDePacientes.enums.SpecialtyEnum;
 import br.com.ControleDePacientes.model.*;
 import br.com.ControleDePacientes.repository.*;
 import jakarta.persistence.EntityNotFoundException;
@@ -14,8 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class AdmissionService {
@@ -102,29 +101,8 @@ public class AdmissionService {
         return updatedAdmissionLog;
     }
 
-    //Retornar todos os pacientes internados, em ordem alfabética e agrupados por especialidade.
-    public Map<SpecialtyEnum, List<AdmittedPatientDTO>> getCurrentlyAdmittedPatients(){
-        List<AdmissionLogModel> activeAdmissions = admissionLogRepository.findActiveAdmissions();
-
-        //Árvore para deixar especialidades já ordenadas
-        Map<SpecialtyEnum, List<AdmittedPatientDTO>> reportMap = new TreeMap<>();
-
-        for (AdmissionLogModel log : activeAdmissions){
-            String patientName = log.getPatient().getName();
-            SpecialtyEnum specialty = log.getBed().getRoom().getWard().getSpecialty();
-            LocalDateTime admissionDate = log.getAdmissionDate();
-            long daysAdmitted = ChronoUnit.DAYS.between(admissionDate,LocalDateTime.now());
-
-            AdmittedPatientDTO dto = new AdmittedPatientDTO(patientName, specialty, admissionDate, daysAdmitted);
-
-            //Esse compute if absent garante que seja criado, mesmo que seja a primeira vez por especialidade
-            reportMap.computeIfAbsent(specialty, k -> new ArrayList<>()).add(dto);
-        }
-
-        for (List<AdmittedPatientDTO> patientDTOList : reportMap.values()){
-            patientDTOList.sort(Comparator.comparing(AdmittedPatientDTO::getPatientName));
-        }
-
-        return reportMap;
+    public List<AdmittedPatientDTO> getCurrentlyAdmittedPatients(){
+        return admissionLogRepository.findActiveAdmissions()
+                .stream().map(AdmittedPatientDTO::new).collect(Collectors.toList());
     }
 }

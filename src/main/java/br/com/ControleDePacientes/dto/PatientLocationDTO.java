@@ -17,5 +17,5 @@ public class PatientLocationDTO {
     private SpecialtyEnum wardSpecialty;
     private String roomCode;
     private String bedCode;
-    private LocalDateTime adimssionDate;
+    private LocalDateTime admissionDate;
 }

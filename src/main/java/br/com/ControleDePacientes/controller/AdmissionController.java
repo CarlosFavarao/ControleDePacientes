@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/adm")
@@ -31,10 +30,9 @@ public class AdmissionController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/currently-admitted")
-    public ResponseEntity<Map<SpecialtyEnum, List<AdmittedPatientDTO>>> getCurrentlyAdmittedPatients(){
-        Map<SpecialtyEnum, List<AdmittedPatientDTO>> report = admissionService.getCurrentlyAdmittedPatients();
-        return ResponseEntity.ok(report);
+    @GetMapping("/currently-admitted") //Exibir os pacientes admitidos, filtrando por Ala e nome. ALém de exibir dias internados de cada paciente. Tudo isso usando query nativa!!!
+    public ResponseEntity<List<AdmittedPatientDTO>> getCurrentlyAdmittedPatients(){
+        return ResponseEntity.ok(admissionService.getCurrentlyAdmittedPatients());
     }
 
     @PutMapping("/discharge/{patientId}") //Dar alta

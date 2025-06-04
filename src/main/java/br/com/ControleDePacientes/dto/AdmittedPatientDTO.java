@@ -1,21 +1,24 @@
 package br.com.ControleDePacientes.dto;
 
 import br.com.ControleDePacientes.enums.SpecialtyEnum;
+import br.com.ControleDePacientes.projections.AdmissionLogProjection;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Data
+@NoArgsConstructor
 public class AdmittedPatientDTO {
     private String patientName;
     private SpecialtyEnum specialty;
     private LocalDateTime admissionDate;
-    private long daysAdmitted;
+    private int daysAdmitted;
 
-    public AdmittedPatientDTO(String patientName, SpecialtyEnum specialty, LocalDateTime admissionDate, long daysAdmitted){
-        this.patientName = patientName;
-        this.specialty = specialty;
-        this.admissionDate = admissionDate;
-        this.daysAdmitted = daysAdmitted;
+    public AdmittedPatientDTO(AdmissionLogProjection admissionLogProjection) {
+        this.patientName = admissionLogProjection.getName();
+        this.specialty = admissionLogProjection.getSpecialty();
+        this.admissionDate = admissionLogProjection.getAdmissionDate();
+        this.daysAdmitted = admissionLogProjection.getDaysAdmitted();
     }
 }

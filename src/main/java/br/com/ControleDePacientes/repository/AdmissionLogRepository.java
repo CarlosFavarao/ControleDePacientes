@@ -2,6 +2,7 @@ package br.com.ControleDePacientes.repository;
 
 import br.com.ControleDePacientes.dto.PatientLocationDTO;
 import br.com.ControleDePacientes.model.AdmissionLogModel;
+import br.com.ControleDePacientes.projections.AdmissionLogProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -30,13 +31,28 @@ public interface AdmissionLogRepository extends JpaRepository<AdmissionLogModel,
             "WHERE p.id = :patientId AND al.dischargeDate IS NULL")
     Optional<AdmissionLogModel> findActiveAdmissionByPatientId(@Param("patientId") Long patientId);
 
-    //Listar todos os pacientes internados no momento.
-    @Query("SELECT al FROM AdmissionLogModel al " +
-            "JOIN FETCH al.patient p " +
-            "JOIN FETCH al.bed b " +
-            "JOIN FETCH b.room r " +
-            "JOIN FETCH r.ward w " +
-            "WHERE al.dischargeDate IS NULL")
-    List<AdmissionLogModel> findActiveAdmissions();
+    @Query(nativeQuery = true, value = //Query nativa, estudar mais sobre isso. É muito mais eficiente e reduz muitas linhas de código.
+            "select " +
+            "   p.name, " +
+            "   w.specialty, " +
+            "   al.admission_date as admissionDate, " +
+            "   date (now()) - date (al.admission_date) as daysAdmitted " +
+            "from " +
+            "   admission_logs al " +
+            "join patients p on " +
+            "   p.id = al.patient_id " +
+            "join beds b on " +
+            "   b.id = al.bed_id " +
+            "join rooms r on " +
+            "   r.id = b.room_id " +
+            "join wards w on " +
+            "   w.id = r.ward_id " +
+            "where " +
+            "   al.discharge_date is null " +
+            "order by " +
+            "   w.specialty, " +
+            "   name, " +
+            "   admission_date;")
+    List<AdmissionLogProjection> findActiveAdmissions();
 
 }
