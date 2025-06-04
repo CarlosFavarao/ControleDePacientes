@@ -2,7 +2,7 @@ package br.com.ControleDePacientes.service;
 
 import br.com.ControleDePacientes.dto.AdmissionRequestDTO;
 import br.com.ControleDePacientes.dto.AdmissionResponseDTO;
-import br.com.ControleDePacientes.dto.AdmittedPatientDTO;
+import br.com.ControleDePacientes.dto.LogDTO;
 import br.com.ControleDePacientes.dto.PatientLocationDTO;
 import br.com.ControleDePacientes.enums.BedStatus;
 import br.com.ControleDePacientes.model.*;
@@ -101,8 +101,8 @@ public class AdmissionService {
         return updatedAdmissionLog;
     }
 
-    public List<AdmittedPatientDTO> getCurrentlyAdmittedPatients(){
+    public List<LogDTO> getCurrentlyAdmittedPatients(){
         return admissionLogRepository.findActiveAdmissions()
-                .stream().map(AdmittedPatientDTO::new).collect(Collectors.toList());
+                .stream().map(LogDTO::new).collect(Collectors.toList());
     }
 }

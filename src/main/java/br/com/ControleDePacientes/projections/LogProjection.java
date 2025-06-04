@@ -4,9 +4,10 @@ import br.com.ControleDePacientes.enums.SpecialtyEnum;
 
 import java.time.LocalDateTime;
 
-public interface AdmissionLogProjection {
+public interface LogProjection {
     String getName();
     SpecialtyEnum getSpecialty();
     LocalDateTime getAdmissionDate();
+    LocalDateTime getDischargeDate();
     int getDaysAdmitted();
 }

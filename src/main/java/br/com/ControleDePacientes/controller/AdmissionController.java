@@ -2,9 +2,8 @@ package br.com.ControleDePacientes.controller;
 
 import br.com.ControleDePacientes.dto.AdmissionRequestDTO;
 import br.com.ControleDePacientes.dto.AdmissionResponseDTO;
-import br.com.ControleDePacientes.dto.AdmittedPatientDTO;
+import br.com.ControleDePacientes.dto.LogDTO;
 import br.com.ControleDePacientes.dto.PatientLocationDTO;
-import br.com.ControleDePacientes.enums.SpecialtyEnum;
 import br.com.ControleDePacientes.model.AdmissionLogModel;
 import br.com.ControleDePacientes.service.AdmissionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +30,7 @@ public class AdmissionController {
     }
 
     @GetMapping("/currently-admitted") //Exibir os pacientes admitidos, filtrando por Ala e nome. ALém de exibir dias internados de cada paciente. Tudo isso usando query nativa!!!
-    public ResponseEntity<List<AdmittedPatientDTO>> getCurrentlyAdmittedPatients(){
+    public ResponseEntity<List<LogDTO>> getCurrentlyAdmittedPatients(){
         return ResponseEntity.ok(admissionService.getCurrentlyAdmittedPatients());
     }
 

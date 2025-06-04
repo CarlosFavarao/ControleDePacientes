@@ -2,7 +2,7 @@ package br.com.ControleDePacientes.repository;
 
 import br.com.ControleDePacientes.dto.PatientLocationDTO;
 import br.com.ControleDePacientes.model.AdmissionLogModel;
-import br.com.ControleDePacientes.projections.AdmissionLogProjection;
+import br.com.ControleDePacientes.projections.LogProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -31,6 +31,7 @@ public interface AdmissionLogRepository extends JpaRepository<AdmissionLogModel,
             "WHERE p.id = :patientId AND al.dischargeDate IS NULL")
     Optional<AdmissionLogModel> findActiveAdmissionByPatientId(@Param("patientId") Long patientId);
 
+    //Lista pacientes internados no momento, ordenados por ala e alfabeticamente.
     @Query(nativeQuery = true, value = //Query nativa, estudar mais sobre isso. É muito mais eficiente e reduz muitas linhas de código.
             "select " +
             "   p.name, " +
@@ -53,6 +54,5 @@ public interface AdmissionLogRepository extends JpaRepository<AdmissionLogModel,
             "   w.specialty, " +
             "   name, " +
             "   admission_date;")
-    List<AdmissionLogProjection> findActiveAdmissions();
-
+    List<LogProjection> findActiveAdmissions();
 }
