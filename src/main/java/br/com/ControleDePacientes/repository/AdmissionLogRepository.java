@@ -1,5 +1,6 @@
 package br.com.ControleDePacientes.repository;
 
+import br.com.ControleDePacientes.dto.BedHistoryDTO;
 import br.com.ControleDePacientes.dto.PatientLocationDTO;
 import br.com.ControleDePacientes.model.AdmissionLogModel;
 import br.com.ControleDePacientes.projections.LogProjection;
@@ -85,4 +86,18 @@ public interface AdmissionLogRepository extends JpaRepository<AdmissionLogModel,
             "    al.admission_date DESC;")
     Page<LogProjection> findAdmissionHistoryByPatientId(@Param("patientId") Long patientId, Pageable pageable);
 
+    //Retorna o histórico de internação de um leito
+    @Query(nativeQuery = true, value = "select " +
+            "p.name as patientName, " +
+            "al.admission_date as admissionDate, " +
+            "al.discharge_date as dischargeDate " +
+            "from " +
+            "   admission_logs al " +
+            "join " +
+            "   patients p on al.patient_id = p.id " +
+            "where " +
+            "   al.bed_id = :bedId " +
+            "order by " +
+            "   al.admission_date desc;")
+    Page<BedHistoryDTO>findBedAdmissionHistoryById(@Param ("bedId")Long BedId, Pageable pageable);
 }

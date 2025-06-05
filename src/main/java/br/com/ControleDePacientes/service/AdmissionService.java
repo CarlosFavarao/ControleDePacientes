@@ -1,9 +1,6 @@
 package br.com.ControleDePacientes.service;
 
-import br.com.ControleDePacientes.dto.AdmissionRequestDTO;
-import br.com.ControleDePacientes.dto.AdmissionResponseDTO;
-import br.com.ControleDePacientes.dto.LogDTO;
-import br.com.ControleDePacientes.dto.PatientLocationDTO;
+import br.com.ControleDePacientes.dto.*;
 import br.com.ControleDePacientes.enums.BedStatus;
 import br.com.ControleDePacientes.model.*;
 import br.com.ControleDePacientes.projections.LogProjection;
@@ -112,5 +109,9 @@ public class AdmissionService {
     public Page<LogDTO> getAdmissionHistoryByPatientId(Long patientId, Pageable pageable){
         Page<LogProjection> page = admissionLogRepository.findAdmissionHistoryByPatientId(patientId, pageable);
         return page.map(LogDTO::new);
+    }
+
+    public Page<BedHistoryDTO> getBedAdmissionHistory(Long bedId, Pageable pageable){
+        return admissionLogRepository.findBedAdmissionHistoryById(bedId, pageable);
     }
 }

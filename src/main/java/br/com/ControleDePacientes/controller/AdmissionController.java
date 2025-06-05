@@ -1,9 +1,6 @@
 package br.com.ControleDePacientes.controller;
 
-import br.com.ControleDePacientes.dto.AdmissionRequestDTO;
-import br.com.ControleDePacientes.dto.AdmissionResponseDTO;
-import br.com.ControleDePacientes.dto.LogDTO;
-import br.com.ControleDePacientes.dto.PatientLocationDTO;
+import br.com.ControleDePacientes.dto.*;
 import br.com.ControleDePacientes.model.AdmissionLogModel;
 import br.com.ControleDePacientes.service.AdmissionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +38,10 @@ public class AdmissionController {
         return admissionService.getAdmissionHistoryByPatientId(patientId, pageable);
     }
 
+    @GetMapping("/history/bed/{bedId}")
+    public Page<BedHistoryDTO> getBedAdmissionHistory(@PathVariable Long bedId, Pageable pageable) {
+        return admissionService.getBedAdmissionHistory(bedId, pageable);
+    }
 
     @PutMapping("/discharge/{patientId}") //Dar alta
     public AdmissionLogModel dischargePatient(@PathVariable Long patientId){
