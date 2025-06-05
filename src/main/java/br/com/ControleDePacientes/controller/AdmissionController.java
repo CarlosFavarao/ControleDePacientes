@@ -7,6 +7,8 @@ import br.com.ControleDePacientes.dto.PatientLocationDTO;
 import br.com.ControleDePacientes.model.AdmissionLogModel;
 import br.com.ControleDePacientes.service.AdmissionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,6 +35,12 @@ public class AdmissionController {
     public ResponseEntity<List<LogDTO>> getCurrentlyAdmittedPatients(){
         return ResponseEntity.ok(admissionService.getCurrentlyAdmittedPatients());
     }
+
+    @GetMapping("/history/patient/{patientId}") //Exibir histórico do paciente
+    public Page<LogDTO> getAdmissionHistoryByPatientId(@PathVariable Long patientId, Pageable pageable){
+        return admissionService.getAdmissionHistoryByPatientId(patientId, pageable);
+    }
+
 
     @PutMapping("/discharge/{patientId}") //Dar alta
     public AdmissionLogModel dischargePatient(@PathVariable Long patientId){

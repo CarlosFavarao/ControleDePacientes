@@ -6,8 +6,11 @@ import br.com.ControleDePacientes.dto.LogDTO;
 import br.com.ControleDePacientes.dto.PatientLocationDTO;
 import br.com.ControleDePacientes.enums.BedStatus;
 import br.com.ControleDePacientes.model.*;
+import br.com.ControleDePacientes.projections.LogProjection;
 import br.com.ControleDePacientes.repository.*;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -104,5 +107,10 @@ public class AdmissionService {
     public List<LogDTO> getCurrentlyAdmittedPatients(){
         return admissionLogRepository.findActiveAdmissions()
                 .stream().map(LogDTO::new).collect(Collectors.toList());
+    }
+
+    public Page<LogDTO> getAdmissionHistoryByPatientId(Long patientId, Pageable pageable){
+        Page<LogProjection> page = admissionLogRepository.findAdmissionHistoryByPatientId(patientId, pageable);
+        return page.map(LogDTO::new);
     }
 }

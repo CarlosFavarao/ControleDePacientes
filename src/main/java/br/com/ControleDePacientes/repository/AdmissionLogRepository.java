@@ -3,6 +3,8 @@ package br.com.ControleDePacientes.repository;
 import br.com.ControleDePacientes.dto.PatientLocationDTO;
 import br.com.ControleDePacientes.model.AdmissionLogModel;
 import br.com.ControleDePacientes.projections.LogProjection;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -55,4 +57,32 @@ public interface AdmissionLogRepository extends JpaRepository<AdmissionLogModel,
             "   name, " +
             "   admission_date;")
     List<LogProjection> findActiveAdmissions();
+
+    //Faz o retorno de forma páginada do histórico de um usuário
+    @Query(nativeQuery = true, value =
+    "select " +
+            "p.name as name, " +
+            "w.specialty as specialty, " +
+            "al.admission_date as admissionDate, " +
+            "al.discharge_date as dischargeDate, " +
+            "case " +
+            "when al.discharge_date is not null then cast(DATE_PART('day', al.discharge_date - al.admission_date) as INTEGER) " +
+            "else cast (DATE_PART('day', CURRENT_TIMESTAMP - al.admission_date) as INTEGER) " +
+            "end as daysAdmitted " +
+            "FROM " +
+            "    admission_logs al " +
+            "JOIN " +
+            "    patients p ON p.id = al.patient_id " +
+            "JOIN " +
+            "    beds b ON b.id = al.bed_id " +
+            "JOIN " +
+            "    rooms r ON r.id = b.room_id " +
+            "JOIN " +
+            "    wards w ON w.id = r.ward_id " +
+            "WHERE " +
+            "    al.patient_id = :patientId " +
+            "ORDER BY " +
+            "    al.admission_date DESC;")
+    Page<LogProjection> findAdmissionHistoryByPatientId(@Param("patientId") Long patientId, Pageable pageable);
+
 }
