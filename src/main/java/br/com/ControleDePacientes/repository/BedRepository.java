@@ -1,6 +1,9 @@
 package br.com.ControleDePacientes.repository;
 
 import br.com.ControleDePacientes.model.BedModel;
+import br.com.ControleDePacientes.projections.AvailableBedProjection;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,4 +16,18 @@ public interface BedRepository extends JpaRepository<BedModel, Long> {
 
     @Query("SELECT b FROM BedModel b WHERE b.room.ward.hospital.id = :hospitalId")
     List<BedModel> findBedsByHospitalId(@Param("hospitalId") Long hospitalId);
+
+    //Mostra camas disponíveis
+    @Query(nativeQuery = true, value =
+            "select w.specialty as specialty, b.id as bedId, " +
+                    "b.code as bedCode, " +
+                    "b.status as bedStatus, " +
+                    "r.id as roomId, " +
+                    "r.code as roomCode " +
+                    "from beds b " +
+                    "join rooms r on b.room_id = r.id " +
+                    "join wards w on r.ward_id = w.id " +
+                    "where b.status = 'AVAILABLE' " +
+                    "order by w.specialty;")
+    Page<AvailableBedProjection> findAvailableBeds(Pageable pageable);
 }

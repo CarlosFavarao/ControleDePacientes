@@ -17,7 +17,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class AdmissionService {
+public class AdmissionLogService {
 
     @Autowired private PatientRepository patientRepository;
     @Autowired private WardRepository wardRepository;
@@ -81,9 +81,6 @@ public class AdmissionService {
         return new AdmissionResponseDTO(savedLog); // << MUDANÇA AQUI
     }
 
-    public Optional<PatientLocationDTO> findPatientLocation(Long patientId) { //Encontrar paciente
-        return admissionLogRepository.findPatientLocationDetails(patientId);
-    }
 
     //Dar alta
     @Transactional
