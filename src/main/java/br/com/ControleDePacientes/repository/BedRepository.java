@@ -19,7 +19,11 @@ public interface BedRepository extends JpaRepository<BedModel, Long> {
 
     //Mostra camas disponíveis
     @Query(nativeQuery = true, value =
-            "select w.specialty as specialty, b.id as bedId, " +
+            "select " +
+                    "h.id as hospitalId, " +
+                    "h.name as hospitalName, " +
+                    "w.specialty as specialty, " +
+                    "b.id as bedId, " +
                     "b.code as bedCode, " +
                     "b.status as bedStatus, " +
                     "r.id as roomId, " +
@@ -27,6 +31,7 @@ public interface BedRepository extends JpaRepository<BedModel, Long> {
                     "from beds b " +
                     "join rooms r on b.room_id = r.id " +
                     "join wards w on r.ward_id = w.id " +
+                    "join hospitals h on w.hospital_id = h.id " +
                     "where b.status = 'AVAILABLE' " +
                     "order by w.specialty;")
     Page<AvailableBedProjection> findAvailableBeds(Pageable pageable);

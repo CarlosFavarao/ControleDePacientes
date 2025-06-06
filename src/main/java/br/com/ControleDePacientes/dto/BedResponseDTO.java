@@ -6,6 +6,8 @@ import lombok.Data;
 
 @Data
 public class BedResponseDTO {
+    private Long hospitalId;
+    private String hospitalName;
     private Long id;
     private String code;
     private BedStatus status;
@@ -15,6 +17,8 @@ public class BedResponseDTO {
     private String patientName;
 
     public BedResponseDTO(BedModel bed) {
+        this.hospitalId = bed.getRoom().getWard().getHospital().getId();
+        this.hospitalName = bed.getRoom().getWard().getHospital().getName();
         this.id = bed.getId();
         this.code = bed.getCode();
         this.status = bed.getStatus();

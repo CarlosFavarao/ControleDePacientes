@@ -13,19 +13,21 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AvailableBedDTO {
+    private Long hospitalId;
+    private String hospitalName;
     private SpecialtyEnum specialty;
     private Long bedId;
     private String bedCode;
-    private BedStatus bedStatus;
     private Long roomId;
     private String roomCode;
 
     public static AvailableBedDTO fromProjection(AvailableBedProjection projection) {
         return new AvailableBedDTO(
+                projection.getHospitalId(),
+                projection.getHospitalName(),
                 SpecialtyEnum.valueOf(projection.getSpecialty()),
                 projection.getBedId(),
                 projection.getBedCode(),
-                BedStatus.valueOf(projection.getBedStatus()),
                 projection.getRoomId(),
                 projection.getRoomCode()
         );

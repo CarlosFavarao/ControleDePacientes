@@ -35,13 +35,13 @@ public class WardController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/stats/beds-by-specialty") //Quantidade de leitos livres por cada especialidade (posso adaptar para ficar melhor)
+    @GetMapping("/stats/beds-by-specialty") //Quantidade de leitos livres por cada especialidade
     public ResponseEntity<List<SpecialtyBedStatsDTO>> getBedStatsBySpecialty(){
         List<SpecialtyBedStatsDTO> stats = wardService.getBedStatsBySpecialty();
         return ResponseEntity.ok(stats);
     }
 
-    @GetMapping("/stats/room-stats-by-specialty")
+    @GetMapping("/stats/room-by-specialty") //Quartos não ocupados por cada especialidade
     public ResponseEntity<List<SpecialtyRoomStatsDTO>> getRoomStatsBySpecialty() {
         List<SpecialtyRoomStatsDTO> stats = wardService.getRoomStatsBySpecialty();
         return ResponseEntity.ok(stats);

@@ -31,7 +31,7 @@ public class BedController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/available")
+    @GetMapping("/available") //Leitos livres, no geral e com detalhes.
     public ResponseEntity<Page<AvailableBedDTO>> getAvailableBeds(Pageable pageable) {
         Page<AvailableBedDTO> availableBedsPage = bedService.findAvailableBeds(pageable);
         return ResponseEntity.ok(availableBedsPage);
