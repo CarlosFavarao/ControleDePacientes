@@ -11,6 +11,8 @@ import java.util.List;
 @Repository
 public interface WardRepository extends JpaRepository<WardModel, Long> {
 
+    boolean existsByHospitalId(Long hospitalId);
+
     @Query(value = "SELECT " +
                     "w.specialty AS specialty, " +
                     "CAST(COUNT(b.id) AS BIGINT) AS totalBeds, " +                                             //Estudar depois!

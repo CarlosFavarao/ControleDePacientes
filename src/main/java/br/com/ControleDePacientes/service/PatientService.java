@@ -15,18 +15,18 @@ public class PatientService {
     private PatientRepository patientRepository;
 
     public PatientModel savePatient(PatientModel patient){
-        return patientRepository.save(patient);
+        return this.patientRepository.save(patient);
     }
 
     public Optional<PatientLocationDTO> findPatientLocation(Long patientId) { //Encontrar paciente
-        return patientRepository.findPatientLocationDetails(patientId);
+        return this.patientRepository.findPatientLocationDetails(patientId);
     }
 
     public List<PatientModel> listPatients(){
-        return patientRepository.findAll();
+        return this.patientRepository.findAll();
     }
 
     public void deletePatient(Long id){
-        patientRepository.deleteById(id);
+        this.patientRepository.deleteById(id);
     }
 }

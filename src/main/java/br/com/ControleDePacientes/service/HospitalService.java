@@ -2,7 +2,9 @@ package br.com.ControleDePacientes.service;
 
 import br.com.ControleDePacientes.model.HospitalModel;
 import br.com.ControleDePacientes.repository.HospitalRepository;
+import br.com.ControleDePacientes.repository.WardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,37 +12,35 @@ import java.util.Optional;
 
 @Service
 public class HospitalService {
-    @Autowired
-    HospitalRepository hospitalRepository;
+    @Autowired HospitalRepository hospitalRepository;
+
+    @Autowired WardService wardService;
 
     public HospitalModel saveHospital(HospitalModel hospital){
-        return hospitalRepository.save(hospital);
+        return this.hospitalRepository.save(hospital);
     }
 
     public HospitalModel updateHospital(Long id, HospitalModel updatedHospital){
-        Optional<HospitalModel> currentHospital = hospitalRepository.findById(id);
-
-        if(currentHospital.isPresent()){
-            HospitalModel hospital = currentHospital.get();
-            hospital.setName(updatedHospital.getName());
-            return hospitalRepository.save(hospital);
-        }
-        return null;
+        HospitalModel hospital = this.findHospitalById(id);
+        hospital.setName(updatedHospital.getName());
+        return this.hospitalRepository.save(hospital);
     }
 
     public List<HospitalModel> listHospitals(){
-        return hospitalRepository.findAll();
+        return this.hospitalRepository.findAll();
     }
 
-    public Optional<HospitalModel> findHospitalById(Long id){
-        return hospitalRepository.findById(id);
+    public HospitalModel findHospitalById(Long id){
+        return this.hospitalRepository.findById(id).orElseThrow(() -> new RuntimeException("Hospital não encontrado."));
     }
 
     public List<HospitalModel> findHospitalByName(String name){
-        return hospitalRepository.findByName(name);
+        return this.hospitalRepository.findByName(name);
     }
 
     public void deleteHospital(Long id){
-        hospitalRepository.deleteById(id); //Vou alterar futuramente para retornar True ou False...
+        if (!wardService.existsByHospitalId(id)) {
+            this.hospitalRepository.deleteById(id);
+        }
     }
 }

@@ -16,14 +16,14 @@ public class RoomService {
     private RoomRepository roomRepository;
 
     public List<RoomModel> findAllRooms(){
-        return roomRepository.findAll();
+        return this.roomRepository.findAll();
     }
 
     public Optional<RoomModel> findRoomById(Long id){
-        return roomRepository.findById(id);
+        return this.roomRepository.findById(id);
     }
 
     public List<AvailableRoomDTO> findRoomsWithAvailableBeds(){
-        return roomRepository.findRoomsWithBedsByStatus(BedStatus.AVAILABLE); //Posso procurar aonde não tem disponivel também,
-    }                                                                         //Mesmo não sendo muito útil
+        return this.roomRepository.findRoomsWithBedsByStatus(BedStatus.AVAILABLE); //Posso procurar aonde não tem disponível também,
+    }                                                                         //Mesmo não sendo muito útil agora
 }

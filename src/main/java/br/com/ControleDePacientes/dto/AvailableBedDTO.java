@@ -1,9 +1,6 @@
 package br.com.ControleDePacientes.dto;
 
-import br.com.ControleDePacientes.enums.BedStatus;
 import br.com.ControleDePacientes.enums.SpecialtyEnum;
-import br.com.ControleDePacientes.model.BedModel;
-import br.com.ControleDePacientes.model.RoomModel;
 import br.com.ControleDePacientes.projections.AvailableBedProjection;
 import lombok.AllArgsConstructor;
 import lombok.Data;

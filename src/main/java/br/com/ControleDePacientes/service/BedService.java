@@ -20,11 +20,11 @@ public class BedService {
     private BedRepository bedRepository;
 
     public List<BedResponseDTO> findAllBeds(){
-        return  bedRepository.findAll().stream().map(BedResponseDTO::new).collect(Collectors.toList());
+        return this.bedRepository.findAll().stream().map(BedResponseDTO::new).collect(Collectors.toList());
     }
 
     public Optional<BedResponseDTO> findByBedId(Long id){
-        return bedRepository.findById(id).map(BedResponseDTO::new);
+        return this.bedRepository.findById(id).map(BedResponseDTO::new);
     }
 
     public List<BedResponseDTO> findBedsByHospitalId(Long hospitalId){

@@ -33,7 +33,7 @@ public class HospitalController {
     }
 
     @GetMapping("/{id}")
-    public Optional<HospitalModel> findHospitalById(@PathVariable Long id){
+    public HospitalModel findHospitalById(@PathVariable Long id){
         return this.hospitalService.findHospitalById(id);
     }
 
@@ -45,7 +45,7 @@ public class HospitalController {
 
     @GetMapping("/{name}")
     public List<HospitalModel> findHospitalByName(@PathVariable String name){
-        return  this.hospitalService.findHospitalByName(name);
+        return this.hospitalService.findHospitalByName(name);
     }
 
     @DeleteMapping("/delete/{id}")

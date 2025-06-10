@@ -78,7 +78,7 @@ public class AdmissionLogService {
         admissionLog.setDischargeDate(null);
 
         AdmissionLogModel savedLog = admissionLogRepository.save(admissionLog);
-        return new AdmissionResponseDTO(savedLog); // << MUDANÇA AQUI
+        return new AdmissionResponseDTO(savedLog);
     }
 
 
@@ -99,7 +99,7 @@ public class AdmissionLogService {
     }
 
     public List<LogDTO> getCurrentlyAdmittedPatients(){
-        return admissionLogRepository.findActiveAdmissions()
+        return this.admissionLogRepository.findActiveAdmissions()
                 .stream().map(LogDTO::new).collect(Collectors.toList());
     }
 
@@ -109,6 +109,6 @@ public class AdmissionLogService {
     }
 
     public Page<BedHistoryDTO> getBedAdmissionHistory(Long bedId, Pageable pageable){
-        return admissionLogRepository.findBedAdmissionHistoryById(bedId, pageable);
+        return this.admissionLogRepository.findBedAdmissionHistoryById(bedId, pageable);
     }
 }

@@ -39,7 +39,7 @@ public class WardService {
             throw new IllegalArgumentException("Dados inválidos para a criação da Ala.");
         }
 
-        HospitalModel hospital = hospitalRepository.findById(dto.getHospitalId())
+        HospitalModel hospital = this.hospitalRepository.findById(dto.getHospitalId())
                 .orElseThrow(() -> new EntityNotFoundException("Hospital não encontrado."));
 
         WardModel newWard = new WardModel();
@@ -86,6 +86,9 @@ public class WardService {
         return wardRepository.getBedStatsBySpecialty();
     }
 
+    public boolean existsByHospitalId(Long hospitalId){
+        return wardRepository.existsByHospitalId(hospitalId);
+    }
 
     public List<SpecialtyRoomStatsDTO> getRoomStatsBySpecialty() {
         List<WardModel> wardsWithDetails = wardRepository.findAllWithRoomsAndBeds();
