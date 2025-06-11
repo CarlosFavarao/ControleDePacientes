@@ -6,6 +6,7 @@ import br.com.ControleDePacientes.dto.WardCreateRequestDTO;
 import br.com.ControleDePacientes.dto.WardResponseDTO;
 import br.com.ControleDePacientes.model.WardModel;
 import br.com.ControleDePacientes.service.WardService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,9 +31,8 @@ public class WardController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<WardResponseDTO> findWardById(@PathVariable Long id) {
-        return this.wardService.findWardById(id).map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity findWardById(@PathVariable Long id) {
+        return ResponseEntity.ok(this.wardService.findWardById(id));
     }
 
     @GetMapping("/stats/beds-by-specialty") //Quantidade de leitos livres por cada especialidade
