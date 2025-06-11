@@ -38,4 +38,10 @@ public class BedService {
 
         return projectionPage.map(AvailableBedDTO::fromProjection);
     }
+    
+    public Page<AvailableBedDTO> findAvailableBedsByHospitalId(Long hospitalId, String specialtyName, Pageable pageable){
+        Page<AvailableBedProjection> projectionPage = bedRepository.findAvailableBedsByHospitalId(hospitalId, specialtyName, pageable);
+
+        return projectionPage.map(AvailableBedDTO::fromProjection);
+    }
 }

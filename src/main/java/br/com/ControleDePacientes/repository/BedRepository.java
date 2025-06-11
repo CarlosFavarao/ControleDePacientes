@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -35,4 +36,27 @@ public interface BedRepository extends JpaRepository<BedModel, Long> {
                     "where b.status = 'AVAILABLE' " +
                     "order by w.specialty;")
     Page<AvailableBedProjection> findAvailableBeds(Pageable pageable);
+
+    @Query(nativeQuery = true, value =
+    "select " +
+            "h.id as hospitalId, " +
+            "h.name as hospitalName, " +
+            "w.specialty as specialty, " +
+            "r.id as roomId, " +
+            "r.code as roomCode, " +
+            "b.id as bedId, " +
+            "b.code as bedCode " +
+            "from beds b " +
+            "join rooms r on b.room_id = r.id " +
+            "join wards w on r.ward_id = w.id " +
+            "join hospitals h on w.hospital_id = h.id " +
+            "where b.patient_id is null " +
+            "and w.hospital_id = :hospitalId " +
+            "and w.specialty = :specialtyName",
+    countQuery = "select count(b.id) " +
+            "from beds b " +
+            "join rooms r on b.room_id = r.id " +
+            "join wards w on r.ward_id = w.id " +
+            "where b.patient_id is null and w.hospital_id = :hospitalId and w.specialty = :specialtyName")
+    Page<AvailableBedProjection> findAvailableBedsByHospitalId(@RequestParam("hospitalId") Long hospitalId, @RequestParam("specialtyName") String specialtyName,Pageable pageable);
 }

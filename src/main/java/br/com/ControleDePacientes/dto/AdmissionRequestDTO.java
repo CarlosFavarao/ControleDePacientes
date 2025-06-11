@@ -6,5 +6,5 @@ import lombok.Data;
 @Data
 public class AdmissionRequestDTO {
     private Long patientId;
-    private SpecialtyEnum specialty;
+    private Long bedId;
 }

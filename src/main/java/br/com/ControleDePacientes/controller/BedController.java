@@ -7,10 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -35,5 +32,11 @@ public class BedController {
     public ResponseEntity<Page<AvailableBedDTO>> getAvailableBeds(Pageable pageable) {
         Page<AvailableBedDTO> availableBedsPage = bedService.findAvailableBeds(pageable);
         return ResponseEntity.ok(availableBedsPage);
+    }
+
+    @GetMapping("/available/{hospitalId}/{specialtyName}")
+    public ResponseEntity<Page<AvailableBedDTO>> getAvailableBedsByHospitalId(@PathVariable Long hospitalId, @PathVariable String specialtyName, Pageable pageable){
+        Page<AvailableBedDTO> bedsPage = bedService.findAvailableBedsByHospitalId(hospitalId, specialtyName, pageable);
+        return ResponseEntity.ok(bedsPage);
     }
 }

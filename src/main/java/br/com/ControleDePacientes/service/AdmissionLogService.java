@@ -25,55 +25,36 @@ public class AdmissionLogService {
     @Autowired private BedRepository bedRepository;
     @Autowired private AdmissionLogRepository admissionLogRepository;
 
-    //Admitir um paciente (vai ser alterado futuramente, mas funciona)
     @Transactional
     public AdmissionResponseDTO admitPatient(AdmissionRequestDTO admissionRequest){
-        if (admissionRequest.getPatientId() == null || admissionRequest.getSpecialty() == null) {
-            throw new IllegalArgumentException("ID do Paciente e Especialidade são obrigatórios.");
+        if (admissionRequest.getPatientId() == null || admissionRequest.getBedId() == null) {
+            throw new IllegalArgumentException("ID do Paciente e Id do Leito são obrigatórios.");
         }
 
+        //Verifica se o paciente já está internado
+        admissionLogRepository.findActiveAdmissionByPatientId(admissionRequest.getPatientId())
+                .ifPresent(admission -> {
+                    throw new IllegalStateException("Paciente já possui uma internação ativa.");
+                });
+
+        //Busca o paciente o leito para internação
         PatientModel patient = patientRepository.findById(admissionRequest.getPatientId())
-                .orElseThrow(() -> new EntityNotFoundException("Paciente não encontrado..."));
+                .orElseThrow(() -> new EntityNotFoundException("Paciente não encontrado com ID: " + admissionRequest.getPatientId()));
 
-        List<WardModel> wardsWithSpecialty = wardRepository.findAll().stream()
-                .filter(ward -> ward.getSpecialty() == admissionRequest.getSpecialty()).toList();
+        BedModel bed = bedRepository.findById(admissionRequest.getBedId())
+                .orElseThrow(() -> new EntityNotFoundException("Leito não encontrado com ID: " + admissionRequest.getBedId()));
 
-        if (wardsWithSpecialty.isEmpty()) {
-            throw new EntityNotFoundException("Nenhuma ala encontrada para a especialidade: " + admissionRequest.getSpecialty());
+        if (bed.getStatus() != BedStatus.AVAILABLE) {
+            throw new IllegalStateException("O leito " + bed.getCode() + " não está disponível.");
         }
 
-        BedModel availableBed = null;
-        for (WardModel ward : wardsWithSpecialty) {
-            List<RoomModel> roomsInWard = roomRepository.findAll().stream()
-                    .filter(room -> room.getWard().getId().equals(ward.getId()))
-                    .toList();
-
-            for (RoomModel room : roomsInWard) {
-                Optional<BedModel> bedOptional = bedRepository.findAll().stream()
-                        .filter(bed -> bed.getRoom().getId().equals(room.getId()) && bed.getStatus() == BedStatus.AVAILABLE)
-                        .findFirst();
-
-                if (bedOptional.isPresent()) {
-                    availableBed = bedOptional.get();
-                    break;
-                }
-            }
-            if (availableBed != null) {
-                break;
-            }
-        }
-
-        if (availableBed == null) {
-            throw new RuntimeException("Nenhum leito disponível para a especialidade: " + admissionRequest.getSpecialty());
-        }
-
-        availableBed.setPatient(patient);
-        availableBed.setStatus(BedStatus.OCCUPIED);
-        bedRepository.save(availableBed);
+        bed.setPatient(patient);
+        bed.setStatus(BedStatus.OCCUPIED);
+        bedRepository.save(bed);
 
         AdmissionLogModel admissionLog = new AdmissionLogModel();
         admissionLog.setPatient(patient);
-        admissionLog.setBed(availableBed);
+        admissionLog.setBed(bed);
         admissionLog.setAdmissionDate(LocalDateTime.now());
         admissionLog.setDischargeDate(null);
 
