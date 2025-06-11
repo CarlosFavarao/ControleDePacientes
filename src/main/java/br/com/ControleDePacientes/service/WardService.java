@@ -85,23 +85,28 @@ public class WardService {
         return savedWard;
     }
 
+    @Transactional(readOnly = true)
     public List<WardResponseDTO> findAllWards() {
         List<WardModel> wards = wardRepository.findAll();
         return wards.stream().map(WardResponseDTO::new).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public Optional<WardResponseDTO> findWardById(Long id) {
         return wardRepository.findById(id).map(WardResponseDTO::new);
     }
 
+    @Transactional(readOnly = true)
     public List<SpecialtyBedStatsDTO> getBedStatsBySpecialty(){
         return wardRepository.getBedStatsBySpecialty();
     }
 
+    @Transactional(readOnly = true)
     public boolean existsByHospitalId(Long hospitalId){
         return wardRepository.existsByHospitalId(hospitalId);
     }
 
+    @Transactional(readOnly = true)
     public List<SpecialtyRoomStatsDTO> getRoomStatsBySpecialty() {
         List<WardModel> wardsWithDetails = wardRepository.findAllWithRoomsAndBeds();
         Map<SpecialtyEnum, RoomStatsAggregator> statsMap = new HashMap<>();

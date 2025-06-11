@@ -79,16 +79,19 @@ public class AdmissionLogService {
         return updatedAdmissionLog;
     }
 
+    @Transactional(readOnly = true)
     public List<LogDTO> getCurrentlyAdmittedPatients(){
         return this.admissionLogRepository.findActiveAdmissions()
                 .stream().map(LogDTO::new).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public Page<LogDTO> getAdmissionHistoryByPatientId(Long patientId, Pageable pageable){
         Page<LogProjection> page = admissionLogRepository.findAdmissionHistoryByPatientId(patientId, pageable);
         return page.map(LogDTO::new);
     }
 
+    @Transactional(readOnly = true)
     public Page<BedHistoryDTO> getBedAdmissionHistory(Long bedId, Pageable pageable){
         return this.admissionLogRepository.findBedAdmissionHistoryById(bedId, pageable);
     }
