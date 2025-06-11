@@ -47,26 +47,38 @@ public class WardService {
         newWard.setHospital(hospital);
         WardModel savedWard = wardRepository.save(newWard);
 
-        String prefix = savedWard.getSpecialty().getPrefix();
+        String prefix = savedWard.getSpecialty().getPrefix(); //Prefixo para nomenclatura
+        String specialtyName = savedWard.getSpecialty().name(); //Nome da especialidade para consulta no BD
 
-        long existingRoomsWithPrefixCount = roomRepository.countByCodeStartingWith(prefix);
+        List<Integer> existingNumbersList = roomRepository.findExistingRoomNumbers(hospital.getId(), specialtyName);
 
-        for (int i = 1; i <= dto.getNumberOfRooms(); i++){ //Cria os quartos
+        Set<Integer> existingNumbersSet = new HashSet<>(existingNumbersList); //Pega os números resgatados e coloca-os em um hashset, para uma busca rápida e eficaz
+
+        int nextRoomNumber = 1;
+        for (int i = 0; i < dto.getNumberOfRooms(); i++) {
+            while (existingNumbersSet.contains(nextRoomNumber)) { //Encontra o próximo número vago
+                nextRoomNumber++;
+            }
+
+            //Cria o quarto baseado nesse número resgatado lá em cima
             RoomModel newRoom = new RoomModel();
-            long currentRoomNumber = existingRoomsWithPrefixCount + i;
-            String roomCode = prefix + currentRoomNumber; //Para o código ser gerado já com o Prefixo definido...
-            newRoom.setCode(roomCode);                    //Se já existirem quartos com o prefixo e só forem adicionados mais, cria com os prefixos certos.
+            String roomCode = prefix + nextRoomNumber;
+            newRoom.setCode(roomCode);
             newRoom.setStatus(RoomStatus.ACTIVE);
             newRoom.setWard(savedWard);
             RoomModel savedRoom = roomRepository.save(newRoom);
 
-            for (int j = 1; j <= dto.getBedsPerRoom(); j++){ //Cria as camas nos quartos
+            //Adiciona no HashSet (para não ser adicionado o mesmo várias vezes)
+            existingNumbersSet.add(nextRoomNumber);
+
+            //Cria os leitos normalmente.
+            for (int j = 1; j <= dto.getBedsPerRoom(); j++) {
                 BedModel newBed = new BedModel();
-                String bedCode = roomCode + "-" + j; //Gera o código da cama pelo código da sala
+                String bedCode = roomCode + "-" + j;
                 newBed.setCode(bedCode);
                 newBed.setStatus(BedStatus.AVAILABLE);
                 newBed.setRoom(savedRoom);
-                newBed.setPatient(null); //Null = sem paciente
+                newBed.setPatient(null);
                 bedRepository.save(newBed);
             }
         }
