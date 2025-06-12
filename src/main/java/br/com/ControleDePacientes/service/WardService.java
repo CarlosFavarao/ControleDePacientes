@@ -13,6 +13,7 @@ import br.com.ControleDePacientes.model.RoomModel;
 import br.com.ControleDePacientes.model.WardModel;
 import br.com.ControleDePacientes.repository.WardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,8 @@ import java.util.stream.Collectors;
 @Service
 public class WardService {
     @Autowired private WardRepository wardRepository;
+
+    @Lazy
     @Autowired private HospitalService hospitalService;
     @Autowired private RoomService roomService;
     @Autowired private BedService bedService;
