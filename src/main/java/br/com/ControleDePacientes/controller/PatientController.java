@@ -17,22 +17,22 @@ public class PatientController {
 
     @PostMapping
     public PatientModel savePatient(@RequestBody PatientModel patient){
-        return patientService.savePatient(patient);
+        return this.patientService.savePatient(patient);
     }
 
     @GetMapping
     public List<PatientModel> listAllPatients(){
-        return patientService.listPatients();
+        return this.patientService.listPatients();
     }
 
     @GetMapping("/location/{patientId}") //Encontrar
     public ResponseEntity<PatientLocationDTO> getPatientLocation(@PathVariable Long patientId) { //Se não fizer sentido, posso mover para patient
-        return patientService.findPatientLocation(patientId).map(ResponseEntity::ok)
+        return this.patientService.findPatientLocation(patientId).map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
     public void deletePatient(Long id){
-        patientService.deletePatient(id);
+        this.patientService.deletePatient(id);
     }
 }

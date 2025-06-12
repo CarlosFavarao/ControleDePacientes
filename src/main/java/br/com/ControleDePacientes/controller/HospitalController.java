@@ -39,7 +39,7 @@ public class HospitalController {
 
     @GetMapping("/{hospitalId}/beds") //exibir camas do hospital
     public ResponseEntity<List<BedResponseDTO>> getBedsByHospitalId(@PathVariable Long hospitalId){
-        List<BedResponseDTO> beds = bedService.findBedsByHospitalId(hospitalId);
+        List<BedResponseDTO> beds = this.bedService.findBedsByHospitalId(hospitalId);
         return ResponseEntity.ok(beds);
     }
 

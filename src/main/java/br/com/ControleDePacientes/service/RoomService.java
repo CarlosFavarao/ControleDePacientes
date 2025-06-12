@@ -21,12 +21,12 @@ public class RoomService {
 
     @Transactional
     public RoomModel save(RoomModel room){
-        return roomRepository.save(room);
+        return this.roomRepository.save(room);
     }
 
     @Transactional
     public RoomResponseDTO updateRoom(Long id){
-        RoomModel room = roomRepository.findById(id).orElseThrow(() -> new RuntimeException("Quarto não encontrado."));
+        RoomModel room = this.roomRepository.findById(id).orElseThrow(() -> new RuntimeException("Quarto não encontrado."));
 
         if (room.getStatus() == RoomStatus.ACTIVE) {
             room.setStatus(RoomStatus.MAINTENANCE);
@@ -34,7 +34,7 @@ public class RoomService {
             room.setStatus(RoomStatus.ACTIVE);
         }
 
-        RoomModel updatedRoom = roomRepository.save(room);
+        RoomModel updatedRoom = this.roomRepository.save(room);
 
         return new RoomResponseDTO(updatedRoom);
     }
