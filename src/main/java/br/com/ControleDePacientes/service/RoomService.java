@@ -16,14 +16,24 @@ public class RoomService {
     @Autowired
     private RoomRepository roomRepository;
 
+    @Transactional
+    public RoomModel save(RoomModel room){
+        return roomRepository.save(room);
+    }
+
     @Transactional(readOnly = true)
     public List<RoomModel> findAllRooms(){
         return this.roomRepository.findAll();
     }
 
     @Transactional(readOnly = true)
-    public Optional<RoomModel> findRoomById(Long id){
-        return this.roomRepository.findById(id);
+    public RoomModel findRoomById(Long id){
+        return this.roomRepository.findById(id).orElseThrow(() -> new RuntimeException("Quarto não encontrado."));
+    }
+
+    @Transactional
+    public List<Integer> findExistingRoomNumbers(Long hospitalId, String specialtyName){
+        return this.roomRepository.findExistingRoomNumbers(hospitalId,specialtyName);
     }
 
     @Transactional(readOnly = true)

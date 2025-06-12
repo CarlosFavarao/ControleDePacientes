@@ -11,11 +11,7 @@ import br.com.ControleDePacientes.model.BedModel;
 import br.com.ControleDePacientes.model.HospitalModel;
 import br.com.ControleDePacientes.model.RoomModel;
 import br.com.ControleDePacientes.model.WardModel;
-import br.com.ControleDePacientes.repository.BedRepository;
-import br.com.ControleDePacientes.repository.HospitalRepository;
-import br.com.ControleDePacientes.repository.RoomRepository;
 import br.com.ControleDePacientes.repository.WardRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,9 +22,9 @@ import java.util.stream.Collectors;
 @Service
 public class WardService {
     @Autowired private WardRepository wardRepository;
-    @Autowired private HospitalRepository hospitalRepository;
-    @Autowired private RoomRepository roomRepository;
-    @Autowired private BedRepository bedRepository;
+    @Autowired private HospitalService hospitalService;
+    @Autowired private RoomService roomService;
+    @Autowired private BedService bedService;
 
     @Transactional
     public WardModel createWardWithRoomsAndBeds(WardCreateRequestDTO dto){ //Cria as Alas com Quartos e leitos prontos, funciona bem porém...
@@ -39,18 +35,17 @@ public class WardService {
             throw new IllegalArgumentException("Dados inválidos para a criação da Ala.");
         }
 
-        HospitalModel hospital = this.hospitalRepository.findById(dto.getHospitalId())
-                .orElseThrow(() -> new EntityNotFoundException("Hospital não encontrado."));
+        HospitalModel hospital = this.hospitalService.findHospitalById(dto.getHospitalId());
 
         WardModel newWard = new WardModel();
         newWard.setSpecialty(dto.getSpecialty());
         newWard.setHospital(hospital);
-        WardModel savedWard = wardRepository.save(newWard);
+        WardModel savedWard = this.wardRepository.save(newWard);
 
         String prefix = savedWard.getSpecialty().getPrefix(); //Prefixo para nomenclatura
         String specialtyName = savedWard.getSpecialty().name(); //Nome da especialidade para consulta no BD
 
-        List<Integer> existingNumbersList = roomRepository.findExistingRoomNumbers(hospital.getId(), specialtyName);
+        List<Integer> existingNumbersList = this.roomService.findExistingRoomNumbers(hospital.getId(), specialtyName);
 
         Set<Integer> existingNumbersSet = new HashSet<>(existingNumbersList); //Pega os números resgatados e coloca-os em um hashset, para uma busca rápida e eficaz
 
@@ -66,7 +61,7 @@ public class WardService {
             newRoom.setCode(roomCode);
             newRoom.setStatus(RoomStatus.ACTIVE);
             newRoom.setWard(savedWard);
-            RoomModel savedRoom = roomRepository.save(newRoom);
+            RoomModel savedRoom = this.roomService.save(newRoom);
 
             //Adiciona no HashSet (para não ser adicionado o mesmo várias vezes)
             existingNumbersSet.add(nextRoomNumber);
@@ -79,7 +74,7 @@ public class WardService {
                 newBed.setStatus(BedStatus.AVAILABLE);
                 newBed.setRoom(savedRoom);
                 newBed.setPatient(null);
-                bedRepository.save(newBed);
+                bedService.save(newBed);
             }
         }
         return savedWard;
@@ -87,28 +82,29 @@ public class WardService {
 
     @Transactional(readOnly = true)
     public List<WardResponseDTO> findAllWards() {
-        List<WardModel> wards = wardRepository.findAll();
+        List<WardModel> wards = this.wardRepository.findAll();
         return wards.stream().map(WardResponseDTO::new).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public Optional<WardResponseDTO> findWardById(Long id) {
-        return wardRepository.findById(id).map(WardResponseDTO::new);
+    public WardResponseDTO findWardById(Long id) {
+        return this.wardRepository.findById(id).map(WardResponseDTO::new)
+                .orElseThrow(() -> new RuntimeException("Ward não encontrada."));
     }
 
     @Transactional(readOnly = true)
     public List<SpecialtyBedStatsDTO> getBedStatsBySpecialty(){
-        return wardRepository.getBedStatsBySpecialty();
+        return this.wardRepository.getBedStatsBySpecialty();
     }
 
     @Transactional(readOnly = true)
     public boolean existsByHospitalId(Long hospitalId){
-        return wardRepository.existsByHospitalId(hospitalId);
+        return this.wardRepository.existsByHospitalId(hospitalId);
     }
 
     @Transactional(readOnly = true)
     public List<SpecialtyRoomStatsDTO> getRoomStatsBySpecialty() {
-        List<WardModel> wardsWithDetails = wardRepository.findAllWithRoomsAndBeds();
+        List<WardModel> wardsWithDetails = this.wardRepository.findAllWithRoomsAndBeds();
         Map<SpecialtyEnum, RoomStatsAggregator> statsMap = new HashMap<>();
 
         for (WardModel ward : wardsWithDetails) {

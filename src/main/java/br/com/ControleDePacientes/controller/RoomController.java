@@ -20,18 +20,17 @@ public class RoomController {
 
     @GetMapping
     public List<RoomModel> findAllRooms(){
-        return roomService.findAllRooms();
+        return this.roomService.findAllRooms();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RoomModel> findByRoomId(@PathVariable Long id){
-        return roomService.findRoomById(id).map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity findByRoomId(@PathVariable Long id){
+        return ResponseEntity.ok(this.roomService.findRoomById(id));
     }
 
     @GetMapping("/available")
     public ResponseEntity<List<AvailableRoomDTO>> getAvailableRooms(){
-        List<AvailableRoomDTO> availableRooms = roomService.findRoomsWithAvailableBeds();
-        return  ResponseEntity.ok(availableRooms);
+        List<AvailableRoomDTO> availableRooms = this.roomService.findRoomsWithAvailableBeds();
+        return ResponseEntity.ok(availableRooms);
     }
 }

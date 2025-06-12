@@ -26,6 +26,11 @@ public class PatientService {
     }
 
     @Transactional(readOnly = true)
+    public PatientModel findById(Long id){
+        return patientRepository.findById(id).orElseThrow(() -> new RuntimeException("Paciente não encontrado."));
+    }
+
+    @Transactional(readOnly = true)
     public List<PatientModel> listPatients(){
         return this.patientRepository.findAll();
     }
