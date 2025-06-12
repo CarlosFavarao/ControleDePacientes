@@ -1,14 +1,12 @@
 package br.com.ControleDePacientes.controller;
 
 import br.com.ControleDePacientes.dto.AvailableRoomDTO;
+import br.com.ControleDePacientes.dto.RoomResponseDTO;
 import br.com.ControleDePacientes.model.RoomModel;
 import br.com.ControleDePacientes.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -18,8 +16,13 @@ public class RoomController {
     @Autowired
     private RoomService roomService;
 
+    @PutMapping("/{id}/update")
+    public ResponseEntity updateRoom(@PathVariable Long id){
+        return ResponseEntity.ok(this.roomService.updateRoom(id));
+    }
+
     @GetMapping
-    public List<RoomModel> findAllRooms(){
+    public List<RoomResponseDTO> findAllRooms(){
         return this.roomService.findAllRooms();
     }
 
