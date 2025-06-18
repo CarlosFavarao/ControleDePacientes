@@ -22,7 +22,7 @@ public class HospitalController {
         return this.hospitalService.saveHospital(hospital);
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public HospitalModel updateHospital(@PathVariable Long id, @RequestBody HospitalModel hospital){
         return this.hospitalService.updateHospital(id, hospital);
     }
@@ -43,12 +43,12 @@ public class HospitalController {
         return ResponseEntity.ok(beds);
     }
 
-    @GetMapping("/{name}")
+    @GetMapping("/search/{name}")
     public List<HospitalModel> findHospitalByName(@PathVariable String name){
         return this.hospitalService.findHospitalByName(name);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public void deleteHospital(@PathVariable Long id){
         this.hospitalService.deleteHospital(id);
     }

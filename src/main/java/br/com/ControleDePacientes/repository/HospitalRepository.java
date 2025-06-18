@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface HospitalRepository extends JpaRepository <HospitalModel, Long>{
-    List<HospitalModel> findByName(String name);
+    List<HospitalModel> findByNameContainingIgnoreCase(String name);
 }

@@ -40,10 +40,10 @@ public class HospitalService {
 
     @Transactional(readOnly = true)
     public List<HospitalModel> findHospitalByName(String name){
-        return this.hospitalRepository.findByName(name);
+        return this.hospitalRepository.findByNameContainingIgnoreCase(name);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public void deleteHospital(Long id){
         if (!wardService.existsByHospitalId(id)) {
             this.hospitalRepository.deleteById(id);
