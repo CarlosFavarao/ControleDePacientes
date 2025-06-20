@@ -4,6 +4,8 @@ import br.com.ControleDePacientes.dto.PatientLocationDTO;
 import br.com.ControleDePacientes.model.PatientModel;
 import br.com.ControleDePacientes.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +20,16 @@ public class PatientController {
     @PostMapping
     public PatientModel savePatient(@RequestBody PatientModel patient){
         return this.patientService.savePatient(patient);
+    }
+
+    @PutMapping("/{id}")
+    public PatientModel updatePatient(@PathVariable Long id, @RequestBody PatientModel patient){
+        return this.patientService.updatePatient(id, patient);
+    }
+
+    @GetMapping("/search/{name}")
+    public List<PatientModel> findPatientByName(@PathVariable String name){
+        return this.patientService.findByName(name);
     }
 
     @GetMapping

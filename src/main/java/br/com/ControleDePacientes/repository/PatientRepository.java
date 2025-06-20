@@ -7,10 +7,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface PatientRepository extends JpaRepository <PatientModel, Long> {
+    List<PatientModel> findByNameContainingIgnoreCase(String name);
+
     //Mostrar quarto que paciente está internado. Passou por alguns refinamentos antes de ir para o commit (para função na service não ficar gigante!!)
     @Query("SELECT new br.com.ControleDePacientes.dto.PatientLocationDTO(" +
             "    p.id, p.name, h.name, w.specialty, r.code, b.code, al.admissionDate) " +

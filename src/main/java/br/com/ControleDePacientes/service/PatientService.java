@@ -4,6 +4,8 @@ import br.com.ControleDePacientes.dto.PatientLocationDTO;
 import br.com.ControleDePacientes.model.PatientModel;
 import br.com.ControleDePacientes.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,8 +23,18 @@ public class PatientService {
     }
 
     @Transactional(readOnly = true)
+    public List<PatientModel> listPatients(){
+        return this.patientRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
     public Optional<PatientLocationDTO> findPatientLocation(Long patientId) { //Encontrar paciente
         return this.patientRepository.findPatientLocationDetails(patientId);
+    }
+
+    @Transactional
+    public List<PatientModel> findByName(String name){
+        return this.patientRepository.findByNameContainingIgnoreCase(name);
     }
 
     @Transactional(readOnly = true)
@@ -30,9 +42,12 @@ public class PatientService {
         return patientRepository.findById(id).orElseThrow(() -> new RuntimeException("Paciente não encontrado."));
     }
 
-    @Transactional(readOnly = true)
-    public List<PatientModel> listPatients(){
-        return this.patientRepository.findAll();
+    @Transactional
+    public PatientModel updatePatient(Long id, PatientModel updatedPatient){
+        PatientModel patient = this.findById(id);
+        patient.setName(updatedPatient.getName());
+
+        return this.patientRepository.save(patient);
     }
 
     @Transactional

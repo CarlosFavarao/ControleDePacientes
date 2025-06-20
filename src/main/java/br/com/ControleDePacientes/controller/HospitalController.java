@@ -5,6 +5,8 @@ import br.com.ControleDePacientes.service.BedService;
 import br.com.ControleDePacientes.service.HospitalService;
 import br.com.ControleDePacientes.model.HospitalModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +34,12 @@ public class HospitalController {
         return this.hospitalService.listHospitals();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/search/{name}")
+    public List<HospitalModel> findHospitalByName(@PathVariable String name){
+        return this.hospitalService.findHospitalByName(name);
+    }
+
+    @GetMapping("/id/{id}")
     public HospitalModel findHospitalById(@PathVariable Long id){
         return this.hospitalService.findHospitalById(id);
     }
@@ -41,11 +48,6 @@ public class HospitalController {
     public ResponseEntity<List<BedResponseDTO>> getBedsByHospitalId(@PathVariable Long hospitalId){
         List<BedResponseDTO> beds = this.bedService.findBedsByHospitalId(hospitalId);
         return ResponseEntity.ok(beds);
-    }
-
-    @GetMapping("/search/{name}")
-    public List<HospitalModel> findHospitalByName(@PathVariable String name){
-        return this.hospitalService.findHospitalByName(name);
     }
 
     @DeleteMapping("/{id}")
