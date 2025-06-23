@@ -17,7 +17,6 @@ import java.util.Optional;
 @RequestMapping("/hospitals")
 public class HospitalController {
     @Autowired HospitalService hospitalService;
-    @Autowired BedService bedService;
 
     @PostMapping
     public HospitalModel saveHospital(@RequestBody HospitalModel hospital){
@@ -42,12 +41,6 @@ public class HospitalController {
     @GetMapping("/id/{id}")
     public HospitalModel findHospitalById(@PathVariable Long id){
         return this.hospitalService.findHospitalById(id);
-    }
-
-    @GetMapping("/{hospitalId}/beds") //exibir camas do hospital
-    public ResponseEntity<List<BedResponseDTO>> getBedsByHospitalId(@PathVariable Long hospitalId){
-        List<BedResponseDTO> beds = this.bedService.findBedsByHospitalId(hospitalId);
-        return ResponseEntity.ok(beds);
     }
 
     @DeleteMapping("/{id}")

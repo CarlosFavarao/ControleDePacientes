@@ -38,6 +38,29 @@ public interface BedRepository extends JpaRepository<BedModel, Long> {
     Page<AvailableBedProjection> findAvailableBeds(Pageable pageable);
 
     @Query(nativeQuery = true, value =
+            "select " +
+                    "h.id as hospitalId, " +
+                    "h.name as hospitalName, " +
+                    "w.specialty as specialty, " +
+                    "r.id as roomId, " +
+                    "r.code as roomCode, " +
+                    "b.id as bedId, " +
+                    "b.code as bedCode " +
+                    "from beds b " +
+                    "join rooms r on b.room_id = r.id " +
+                    "join wards w on r.ward_id = w.id " +
+                    "join hospitals h on w.hospital_id = h.id " +
+                    "where b.patient_id is null " +
+                    "and w.hospital_id = :hospitalId " +
+                    "and w.specialty = :specialtyName",
+            countQuery = "select count(b.id) " +
+                    "from beds b " +
+                    "join rooms r on b.room_id = r.id " +
+                    "join wards w on r.ward_id = w.id " +
+                    "where b.patient_id is null and w.hospital_id = :hospitalId")
+    Page<AvailableBedProjection> findAvailableBedsByHospitalId(@RequestParam("hospitalId") Long hospitalId, Pageable pageable);
+
+    @Query(nativeQuery = true, value =
     "select " +
             "h.id as hospitalId, " +
             "h.name as hospitalName, " +
@@ -58,5 +81,5 @@ public interface BedRepository extends JpaRepository<BedModel, Long> {
             "join rooms r on b.room_id = r.id " +
             "join wards w on r.ward_id = w.id " +
             "where b.patient_id is null and w.hospital_id = :hospitalId and w.specialty = :specialtyName")
-    Page<AvailableBedProjection> findAvailableBedsByHospitalId(@RequestParam("hospitalId") Long hospitalId, @RequestParam("specialtyName") String specialtyName,Pageable pageable);
+    Page<AvailableBedProjection> findAvailableBedsByHospitalIdAndSpecialty(@RequestParam("hospitalId") Long hospitalId, @RequestParam("specialtyName") String specialtyName, Pageable pageable);
 }

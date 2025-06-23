@@ -55,8 +55,15 @@ public class BedService {
     }
 
     @Transactional(readOnly = true)
-    public Page<AvailableBedDTO> findAvailableBedsByHospitalId(Long hospitalId, String specialtyName, Pageable pageable){
-        Page<AvailableBedProjection> projectionPage = this.bedRepository.findAvailableBedsByHospitalId(hospitalId, specialtyName, pageable);
+    public Page<AvailableBedDTO> findAvailableBedsByHospitalId(Long hospitalId, Pageable pageable){
+        Page<AvailableBedProjection> projectionPage = this.bedRepository.findAvailableBedsByHospitalId(hospitalId, pageable);
+
+        return projectionPage.map(AvailableBedDTO::fromProjection);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<AvailableBedDTO> findAvailableBedsByHospitalIdAndSpecialty(Long hospitalId, String specialtyName, Pageable pageable){
+        Page<AvailableBedProjection> projectionPage = this.bedRepository.findAvailableBedsByHospitalIdAndSpecialty(hospitalId, specialtyName, pageable);
 
         return projectionPage.map(AvailableBedDTO::fromProjection);
     }

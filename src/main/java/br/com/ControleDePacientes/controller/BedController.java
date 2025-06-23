@@ -28,15 +28,27 @@ public class BedController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/{hospitalId}/beds") //exibir camas do hospital
+    public ResponseEntity<List<BedResponseDTO>> getBedsByHospitalId(@PathVariable Long hospitalId){
+        List<BedResponseDTO> beds = this.bedService.findBedsByHospitalId(hospitalId);
+        return ResponseEntity.ok(beds);
+    }
+
     @GetMapping("/available") //Leitos livres, no geral e com detalhes.
     public ResponseEntity<Page<AvailableBedDTO>> getAvailableBeds(Pageable pageable) {
         Page<AvailableBedDTO> availableBedsPage = this.bedService.findAvailableBeds(pageable);
         return ResponseEntity.ok(availableBedsPage);
     }
 
-    @GetMapping("/available/{hospitalId}/{specialtyName}")
-    public ResponseEntity<Page<AvailableBedDTO>> getAvailableBedsByHospitalId(@PathVariable Long hospitalId, @PathVariable String specialtyName, Pageable pageable){
-        Page<AvailableBedDTO> bedsPage = this.bedService.findAvailableBedsByHospitalId(hospitalId, specialtyName, pageable);
+    @GetMapping("/available-by-hospital/{hospitalId}")
+    public ResponseEntity<Page<AvailableBedDTO>> getAvailableBedsByHospitalId(@PathVariable Long hospitalId, Pageable pageable){
+        Page<AvailableBedDTO> bedsPage = this.bedService.findAvailableBedsByHospitalId(hospitalId, pageable);
+        return ResponseEntity.ok(bedsPage);
+    }
+
+    @GetMapping("/available-by-hospital-and-specialty/{hospitalId}/{specialtyName}")
+    public ResponseEntity<Page<AvailableBedDTO>> getAvailableBedsByHospitalIdAndSpecialty(@PathVariable Long hospitalId, @PathVariable String specialtyName, Pageable pageable){
+        Page<AvailableBedDTO> bedsPage = this.bedService.findAvailableBedsByHospitalIdAndSpecialty(hospitalId, specialtyName, pageable);
         return ResponseEntity.ok(bedsPage);
     }
 }

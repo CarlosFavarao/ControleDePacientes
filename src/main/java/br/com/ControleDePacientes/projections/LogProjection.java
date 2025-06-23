@@ -6,8 +6,10 @@ import java.time.LocalDateTime;
 
 public interface LogProjection {
     String getName();
+    String getCode();
     SpecialtyEnum getSpecialty();
     LocalDateTime getAdmissionDate();
     LocalDateTime getDischargeDate();
     int getDaysAdmitted();
+    String getHospitalName();
 }

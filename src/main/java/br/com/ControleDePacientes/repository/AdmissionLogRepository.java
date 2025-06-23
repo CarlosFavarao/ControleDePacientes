@@ -26,9 +26,11 @@ public interface AdmissionLogRepository extends JpaRepository<AdmissionLogModel,
     @Query(nativeQuery = true, value = //Query nativa, estudar mais sobre isso. É muito mais eficiente e reduz muitas linhas de código.
             "select " +
             "   p.name, " +
+            "   r.code, " +
             "   w.specialty, " +
             "   al.admission_date as admissionDate, " +
-            "   date (now()) - date (al.admission_date) as daysAdmitted " +
+            "   date (now()) - date (al.admission_date) as daysAdmitted, " +
+            "   h.name as hospitalName " +
             "from " +
             "   admission_logs al " +
             "join patients p on " +
@@ -39,6 +41,8 @@ public interface AdmissionLogRepository extends JpaRepository<AdmissionLogModel,
             "   r.id = b.room_id " +
             "join wards w on " +
             "   w.id = r.ward_id " +
+             "join hospitals h on " +
+                "h.id = w.hospital_id " +
             "where " +
             "   al.discharge_date is null " +
             "order by " +

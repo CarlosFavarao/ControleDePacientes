@@ -11,16 +11,20 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class LogDTO {
     private String patientName;
+    private String roomCode;
     private SpecialtyEnum specialty;
     private LocalDateTime admissionDate;
     private LocalDateTime dischargeDate;
     private int daysAdmitted;
+    private String hospitalName;
 
     public LogDTO(LogProjection logProjection) {
         this.patientName = logProjection.getName();
+        this.roomCode = logProjection.getCode();
         this.specialty = logProjection.getSpecialty();
         this.admissionDate = logProjection.getAdmissionDate();
         this.dischargeDate = logProjection.getDischargeDate();
         this.daysAdmitted = logProjection.getDaysAdmitted();
+        this.hospitalName = logProjection.getHospitalName();
     }
 }
