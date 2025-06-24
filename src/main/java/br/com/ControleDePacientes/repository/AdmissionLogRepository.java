@@ -55,10 +55,13 @@ public interface AdmissionLogRepository extends JpaRepository<AdmissionLogModel,
     //Faz o retorno de forma páginada do histórico de um usuário
     @Query(nativeQuery = true, value =
     "select " +
+            "p.id as id, " +
             "p.name as name, " +
+            "r.code as code, " +
             "w.specialty as specialty, " +
             "al.admission_date as admissionDate, " +
             "al.discharge_date as dischargeDate, " +
+            "h.name as hospitalName, " +
             "case " +
             "when al.discharge_date is not null then cast(DATE_PART('day', al.discharge_date - al.admission_date) as INTEGER) " +
             "else cast (DATE_PART('day', CURRENT_TIMESTAMP - al.admission_date) as INTEGER) " +
@@ -73,6 +76,8 @@ public interface AdmissionLogRepository extends JpaRepository<AdmissionLogModel,
             "    rooms r ON r.id = b.room_id " +
             "JOIN " +
             "    wards w ON w.id = r.ward_id " +
+            "JOIN " +
+            "   hospitals h on h.id = w.hospital_id " +
             "WHERE " +
             "    al.patient_id = :patientId " +
             "ORDER BY " +
