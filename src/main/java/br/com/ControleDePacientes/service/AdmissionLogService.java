@@ -59,7 +59,7 @@ public class AdmissionLogService {
 
     //Dar alta
     @Transactional
-    public AdmissionLogModel dischargePatient(Long patientId){
+    public AdmissionResponseDTO dischargePatient(Long patientId){
         AdmissionLogModel activeAdmission = this.admissionLogRepository.findActiveAdmissionByPatientId(patientId).orElseThrow(() -> new RuntimeException("Internação não encontrada"));
 
         activeAdmission.setDischargeDate(LocalDateTime.now());
@@ -70,7 +70,7 @@ public class AdmissionLogService {
         bed.setStatus(BedStatus.AVAILABLE);
         this.bedService.save(bed);
 
-        return updatedAdmissionLog;
+        return new AdmissionResponseDTO(updatedAdmissionLog);
     }
 
     @Transactional(readOnly = true)

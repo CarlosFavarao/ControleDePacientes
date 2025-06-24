@@ -25,6 +25,7 @@ public interface AdmissionLogRepository extends JpaRepository<AdmissionLogModel,
     //Lista pacientes internados no momento, ordenados por ala e alfabeticamente.
     @Query(nativeQuery = true, value = //Query nativa, estudar mais sobre isso. É muito mais eficiente e reduz muitas linhas de código.
             "select " +
+            "   p.id, " +
             "   p.name, " +
             "   r.code, " +
             "   w.specialty, " +

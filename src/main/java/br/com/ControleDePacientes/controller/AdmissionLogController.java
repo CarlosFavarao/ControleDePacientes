@@ -18,8 +18,8 @@ public class AdmissionLogController {
     private AdmissionLogService admissionLogService;
 
     @PostMapping //Internar
-    public AdmissionResponseDTO admitPatient(@RequestBody AdmissionRequestDTO admissionRequest) {
-        return this.admissionLogService.admitPatient(admissionRequest);
+    public ResponseEntity<AdmissionResponseDTO> admitPatient(@RequestBody AdmissionRequestDTO admissionRequest) {
+        return ResponseEntity.ok(this.admissionLogService.admitPatient(admissionRequest));
     }
 
     @GetMapping("/currently-admitted") //Exibir os pacientes admitidos, filtrando por Ala e nome. ALém de exibir dias internados de cada paciente. Tudo isso usando query nativa!!!
@@ -38,7 +38,7 @@ public class AdmissionLogController {
     }
 
     @PutMapping("/discharge/{patientId}") //Dar alta
-    public AdmissionLogModel dischargePatient(@PathVariable Long patientId){
-        return this.admissionLogService.dischargePatient(patientId);
+    public ResponseEntity<AdmissionResponseDTO> dischargePatient(@PathVariable Long patientId){
+        return ResponseEntity.ok(this.admissionLogService.dischargePatient(patientId));
     }
 }

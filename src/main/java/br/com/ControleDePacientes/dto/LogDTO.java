@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 public class LogDTO {
+    private Long patientId;
     private String patientName;
     private String roomCode;
     private SpecialtyEnum specialty;
@@ -19,6 +20,7 @@ public class LogDTO {
     private String hospitalName;
 
     public LogDTO(LogProjection logProjection) {
+        this.patientId = logProjection.getId();
         this.patientName = logProjection.getName();
         this.roomCode = logProjection.getCode();
         this.specialty = logProjection.getSpecialty();
