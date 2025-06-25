@@ -14,6 +14,10 @@ import java.util.Optional;
 public interface PatientRepository extends JpaRepository <PatientModel, Long> {
     List<PatientModel> findByNameContainingIgnoreCase(String name);
 
+    @Query(nativeQuery = true,
+            value = "SELECT * FROM patients p order by p.id")
+    List<PatientModel> findAllOrderById();
+
     //Mostrar quarto que paciente está internado. Passou por alguns refinamentos antes de ir para o commit (para função na service não ficar gigante!!)
     @Query("SELECT new br.com.ControleDePacientes.dto.PatientLocationDTO(" +
             "    p.id, p.name, h.name, w.specialty, r.code, b.code, al.admissionDate) " +

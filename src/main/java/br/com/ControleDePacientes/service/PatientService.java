@@ -24,7 +24,7 @@ public class PatientService {
 
     @Transactional(readOnly = true)
     public List<PatientModel> listPatients(){
-        return this.patientRepository.findAll();
+        return this.patientRepository.findAllOrderById();
     }
 
     @Transactional(readOnly = true)
