@@ -16,7 +16,7 @@ import java.util.List;
 public interface BedRepository extends JpaRepository<BedModel, Long> {
 
     @Query("SELECT b FROM BedModel b WHERE b.room.ward.hospital.id = :hospitalId")
-    List<BedModel> findBedsByHospitalId(@Param("hospitalId") Long hospitalId);
+    Page<BedModel> findBedsByHospitalId(@Param("hospitalId") Long hospitalId, Pageable pageable);
 
     //Mostra camas disponíveis
     @Query(nativeQuery = true, value =

@@ -41,10 +41,10 @@ public class BedService {
     }
 
     @Transactional(readOnly = true)
-    public List<BedResponseDTO> findBedsByHospitalId(Long hospitalId){
-        List<BedModel> beds = this.bedRepository.findBedsByHospitalId(hospitalId);
+    public Page<BedResponseDTO> findBedsByHospitalId(Long hospitalId, Pageable pageable){
+        Page<BedModel> beds = this.bedRepository.findBedsByHospitalId(hospitalId, pageable);
 
-        return beds.stream().map(BedResponseDTO::new).collect(Collectors.toList());
+        return beds.map(BedResponseDTO::new);
     }
 
     @Transactional(readOnly = true)

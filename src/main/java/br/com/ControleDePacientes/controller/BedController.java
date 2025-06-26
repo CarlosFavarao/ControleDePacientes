@@ -28,9 +28,9 @@ public class BedController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/{hospitalId}/beds") //exibir camas do hospital
-    public ResponseEntity<List<BedResponseDTO>> getBedsByHospitalId(@PathVariable Long hospitalId){
-        List<BedResponseDTO> beds = this.bedService.findBedsByHospitalId(hospitalId);
+    @GetMapping("/hospital/{hospitalId}") //exibir camas do hospital
+    public ResponseEntity<Page<BedResponseDTO>> getBedsByHospitalId(@PathVariable Long hospitalId, Pageable pageable){
+        Page<BedResponseDTO> beds = this.bedService.findBedsByHospitalId(hospitalId, pageable);
         return ResponseEntity.ok(beds);
     }
 
