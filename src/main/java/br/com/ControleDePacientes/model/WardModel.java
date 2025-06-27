@@ -22,10 +22,10 @@ public class WardModel {
     @Column(nullable = false)
     private SpecialtyEnum specialty;
 
-    @ManyToOne(fetch = FetchType.LAZY) //Alterei para que não existam buscas infinitas...
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hospital_id", nullable = false)
     private HospitalModel hospital;
 
     @OneToMany(mappedBy = "ward", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<RoomModel> rooms = new HashSet<>(); //Para usar a tabela hash...
+    private Set<RoomModel> rooms = new HashSet<>();
 }

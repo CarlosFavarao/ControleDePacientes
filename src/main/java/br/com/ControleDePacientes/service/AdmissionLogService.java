@@ -2,6 +2,7 @@ package br.com.ControleDePacientes.service;
 
 import br.com.ControleDePacientes.dto.*;
 import br.com.ControleDePacientes.enums.BedStatus;
+import br.com.ControleDePacientes.enums.LogStatus;
 import br.com.ControleDePacientes.model.*;
 import br.com.ControleDePacientes.projections.LogProjection;
 import br.com.ControleDePacientes.repository.*;
@@ -49,6 +50,7 @@ public class AdmissionLogService {
         AdmissionLogModel admissionLog = new AdmissionLogModel();
         admissionLog.setPatient(patient);
         admissionLog.setBed(bed);
+        admissionLog.setStatus(LogStatus.INTERNADO);
         admissionLog.setAdmissionDate(LocalDateTime.now());
         admissionLog.setDischargeDate(null);
 
@@ -60,9 +62,11 @@ public class AdmissionLogService {
     //Dar alta
     @Transactional
     public AdmissionResponseDTO dischargePatient(Long patientId){
-        AdmissionLogModel activeAdmission = this.admissionLogRepository.findActiveAdmissionByPatientId(patientId).orElseThrow(() -> new RuntimeException("Internação não encontrada"));
+        AdmissionLogModel activeAdmission = this.admissionLogRepository.findActiveAdmissionByPatientId(patientId)
+                .orElseThrow(() -> new RuntimeException("Internação não encontrada"));
 
         activeAdmission.setDischargeDate(LocalDateTime.now());
+        activeAdmission.setStatus(LogStatus.ALTA);
         AdmissionLogModel updatedAdmissionLog = this.admissionLogRepository.save(activeAdmission);
 
         BedModel bed = activeAdmission.getBed();
@@ -71,6 +75,39 @@ public class AdmissionLogService {
         this.bedService.save(bed);
 
         return new AdmissionResponseDTO(updatedAdmissionLog);
+    }
+
+    //Transferir
+    public AdmissionResponseDTO transferPatient(Long patientId, Long bedId){
+        AdmissionLogModel activeAdmission = this.admissionLogRepository.findActiveAdmissionByPatientId(patientId)
+                .orElseThrow(() -> new RuntimeException("Internação não encontrada"));
+
+        activeAdmission.setDischargeDate(LocalDateTime.now());
+        activeAdmission.setStatus(LogStatus.TRANSFERIDO);
+        admissionLogRepository.save(activeAdmission);
+
+        BedModel bed = activeAdmission.getBed();
+        bed.setPatient(null);
+        bed.setStatus(BedStatus.AVAILABLE);
+        bedService.save(bed);
+
+        BedModel nextBed = bedService.findById(bedId);
+
+        if (nextBed.getStatus() != BedStatus.AVAILABLE) {
+            throw new IllegalStateException("O leito " + nextBed.getCode() + " não está disponível. ");
+        }
+
+        AdmissionLogModel newAdmission = new AdmissionLogModel();
+        newAdmission.setPatient(activeAdmission.getPatient());
+        newAdmission.setStatus(LogStatus.INTERNADO);
+        newAdmission.setBed(nextBed);
+        nextBed.setStatus(BedStatus.OCCUPIED);
+        newAdmission.setAdmissionDate(LocalDateTime.now());
+        newAdmission.setDischargeDate(null);
+
+        admissionLogRepository.save(newAdmission);
+
+        return new AdmissionResponseDTO(newAdmission);
     }
 
     @Transactional(readOnly = true)

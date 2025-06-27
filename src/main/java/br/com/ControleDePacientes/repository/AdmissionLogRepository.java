@@ -23,12 +23,13 @@ public interface AdmissionLogRepository extends JpaRepository<AdmissionLogModel,
     Optional<AdmissionLogModel> findActiveAdmissionByPatientId(@Param("patientId") Long patientId);
 
     //Lista pacientes internados no momento, ordenados por ala e alfabeticamente.
-    @Query(nativeQuery = true, value = //Query nativa, estudar mais sobre isso. É muito mais eficiente e reduz muitas linhas de código.
+    @Query(nativeQuery = true, value =
             "select " +
             "   p.id, " +
             "   p.name, " +
             "   r.code, " +
             "   w.specialty, " +
+            "   al.status as status, " +
             "   al.admission_date as admissionDate, " +
             "   date (now()) - date (al.admission_date) as daysAdmitted, " +
             "   h.name as hospitalName " +
@@ -48,8 +49,8 @@ public interface AdmissionLogRepository extends JpaRepository<AdmissionLogModel,
             "   al.discharge_date is null " +
             "order by " +
             "   w.specialty, " +
-            "   name, " +
-            "   admission_date;")
+            "   p.name" +
+            ",    al.admission_date;")
     List<LogProjection> findActiveAdmissions();
 
     //Faz o retorno de forma páginada do histórico de um usuário
@@ -61,6 +62,7 @@ public interface AdmissionLogRepository extends JpaRepository<AdmissionLogModel,
             "w.specialty as specialty, " +
             "al.admission_date as admissionDate, " +
             "al.discharge_date as dischargeDate, " +
+            "al.status as status, " +
             "h.name as hospitalName, " +
             "case " +
             "when al.discharge_date is not null then cast(DATE_PART('day', al.discharge_date - al.admission_date) as INTEGER) " +

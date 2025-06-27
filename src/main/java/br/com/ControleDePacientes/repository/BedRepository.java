@@ -27,6 +27,7 @@ public interface BedRepository extends JpaRepository<BedModel, Long> {
                     "b.id as bedId, " +
                     "b.code as bedCode, " +
                     "b.status as bedStatus, " +
+                    "b.bed_type as bedType, " +
                     "r.id as roomId, " +
                     "r.code as roomCode " +
                     "from beds b " +
@@ -45,7 +46,8 @@ public interface BedRepository extends JpaRepository<BedModel, Long> {
                     "r.id as roomId, " +
                     "r.code as roomCode, " +
                     "b.id as bedId, " +
-                    "b.code as bedCode " +
+                    "b.code as bedCode, " +
+                    "b.bed_type as bedType " +
                     "from beds b " +
                     "join rooms r on b.room_id = r.id " +
                     "join wards w on r.ward_id = w.id " +
@@ -68,7 +70,8 @@ public interface BedRepository extends JpaRepository<BedModel, Long> {
             "r.id as roomId, " +
             "r.code as roomCode, " +
             "b.id as bedId, " +
-            "b.code as bedCode " +
+            "b.code as bedCode, " +
+            "b.bed_type as bedType " +
             "from beds b " +
             "join rooms r on b.room_id = r.id " +
             "join wards w on r.ward_id = w.id " +

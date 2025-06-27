@@ -1,5 +1,6 @@
 package br.com.ControleDePacientes.dto;
 
+import br.com.ControleDePacientes.enums.LogStatus;
 import br.com.ControleDePacientes.enums.SpecialtyEnum;
 import br.com.ControleDePacientes.projections.LogProjection;
 import lombok.Data;
@@ -18,6 +19,7 @@ public class LogDTO {
     private LocalDateTime dischargeDate;
     private int daysAdmitted;
     private String hospitalName;
+    private LogStatus status;
 
     public LogDTO(LogProjection logProjection) {
         this.patientId = logProjection.getId();
@@ -28,5 +30,6 @@ public class LogDTO {
         this.dischargeDate = logProjection.getDischargeDate();
         this.daysAdmitted = logProjection.getDaysAdmitted();
         this.hospitalName = logProjection.getHospitalName();
+        this.status = logProjection.getStatus();
     }
 }
