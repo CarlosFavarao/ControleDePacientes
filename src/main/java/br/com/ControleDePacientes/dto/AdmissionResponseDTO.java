@@ -2,6 +2,7 @@ package br.com.ControleDePacientes.dto;
 
 import br.com.ControleDePacientes.enums.BedType;
 import br.com.ControleDePacientes.model.AdmissionLogModel;
+import br.com.ControleDePacientes.model.BedModel;
 import lombok.Data;
 import java.time.LocalDateTime;
 
@@ -12,6 +13,7 @@ public class AdmissionResponseDTO {
     private Long patientId;
     private String patientName;
     private Long bedId;
+    private BedModel moved_to;
     private String bedCode;
     private BedType bedType;
 
@@ -26,6 +28,7 @@ public class AdmissionResponseDTO {
             this.bedId = log.getBed().getId();
             this.bedCode = log.getBed().getCode();
             this.bedType = log.getBed().getBedType();
+            this.moved_to = log.getMoved_to();
         }
     }
 }

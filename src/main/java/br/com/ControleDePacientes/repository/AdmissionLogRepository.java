@@ -63,6 +63,7 @@ public interface AdmissionLogRepository extends JpaRepository<AdmissionLogModel,
             "al.admission_date as admissionDate, " +
             "al.discharge_date as dischargeDate, " +
             "al.status as status, " +
+            "al.moved_to as moved_to, " +
             "h.name as hospitalName, " +
             "case " +
             "when al.discharge_date is not null then cast(DATE_PART('day', al.discharge_date - al.admission_date) as INTEGER) " +

@@ -84,6 +84,7 @@ public class AdmissionLogService {
 
         activeAdmission.setDischargeDate(LocalDateTime.now());
         activeAdmission.setStatus(LogStatus.TRANSFERIDO);
+        activeAdmission.setMoved_to(bedService.findById(bedId));
         admissionLogRepository.save(activeAdmission);
 
         BedModel bed = activeAdmission.getBed();

@@ -2,6 +2,7 @@ package br.com.ControleDePacientes.dto;
 
 import br.com.ControleDePacientes.enums.LogStatus;
 import br.com.ControleDePacientes.enums.SpecialtyEnum;
+import br.com.ControleDePacientes.model.BedModel;
 import br.com.ControleDePacientes.projections.LogProjection;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,7 @@ public class LogDTO {
     private int daysAdmitted;
     private String hospitalName;
     private LogStatus status;
+    private Long moved_to;
 
     public LogDTO(LogProjection logProjection) {
         this.patientId = logProjection.getId();
@@ -31,5 +33,6 @@ public class LogDTO {
         this.daysAdmitted = logProjection.getDaysAdmitted();
         this.hospitalName = logProjection.getHospitalName();
         this.status = logProjection.getStatus();
+        this.moved_to = logProjection.getMoved_to();
     }
 }
