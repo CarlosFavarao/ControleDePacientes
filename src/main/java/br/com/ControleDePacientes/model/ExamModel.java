@@ -3,9 +3,16 @@ package br.com.ControleDePacientes.model;
 import br.com.ControleDePacientes.enums.ExamStatus;
 import br.com.ControleDePacientes.enums.ExamType;
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
+@Table(name = "exam")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(of = "id")
 @Entity
 public class ExamModel {
 
@@ -22,7 +29,10 @@ public class ExamModel {
     @Enumerated(EnumType.STRING)
     private ExamStatus status;
 
-    private PatientModel patientModel;
+    @ManyToOne
+    private PatientModel patient;
 
-    private DoctorModel doctorModel;
+    @ManyToOne
+    @JoinColumn(name = "doctor_id")
+    private DoctorModel responsibleDoctor;
 }

@@ -17,4 +17,10 @@ public class PatientModel {
 
     @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
+    private boolean Admission;
+
+    @ManyToOne
+    private DoctorModel responsibleDoctor;
 }
