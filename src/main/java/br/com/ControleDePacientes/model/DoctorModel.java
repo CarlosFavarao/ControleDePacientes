@@ -1,6 +1,5 @@
 package br.com.ControleDePacientes.model;
 
-import br.com.ControleDePacientes.enums.BedStatus;
 import br.com.ControleDePacientes.enums.SpecialtyEnum;
 import jakarta.persistence.*;
 import lombok.*;
