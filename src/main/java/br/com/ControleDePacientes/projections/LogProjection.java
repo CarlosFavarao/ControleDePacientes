@@ -17,4 +17,5 @@ public interface LogProjection {
     int getDaysAdmitted();
     String getHospitalName();
     Long getMoved_to();
+    Long getDoctorId();
 }

@@ -31,6 +31,7 @@ public interface AdmissionLogRepository extends JpaRepository<AdmissionLogModel,
             "   w.specialty, " +
             "   al.status as status, " +
             "   al.admission_date as admissionDate, " +
+            "   al.doctor_id as doctor_id, " +
             "   date (now()) - date (al.admission_date) as daysAdmitted, " +
             "   h.name as hospitalName " +
             "from " +
@@ -53,7 +54,7 @@ public interface AdmissionLogRepository extends JpaRepository<AdmissionLogModel,
             ",    al.admission_date;")
     List<LogProjection> findActiveAdmissions();
 
-    //Faz o retorno de forma páginada do histórico de um usuário
+    //Faz o retorno de forma páginada do histórico de um paciente
     @Query(nativeQuery = true, value =
     "select " +
             "p.id as id, " +
@@ -64,6 +65,7 @@ public interface AdmissionLogRepository extends JpaRepository<AdmissionLogModel,
             "al.discharge_date as dischargeDate, " +
             "al.status as status, " +
             "al.moved_to as moved_to, " +
+            "al.doctor_id as doctor_id, " +
             "h.name as hospitalName, " +
             "case " +
             "when al.discharge_date is not null then cast(DATE_PART('day', al.discharge_date - al.admission_date) as INTEGER) " +

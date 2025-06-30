@@ -90,21 +90,23 @@ public class AdmissionLogService {
     }
 
     //Transferir
-    public AdmissionResponseDTO transferPatient(Long patientId, Long bedId){
-        AdmissionLogModel activeAdmission = this.admissionLogRepository.findActiveAdmissionByPatientId(patientId)
+    @Transactional
+    public AdmissionResponseDTO transferPatient(TransferPatientDTO transferPatient){
+        AdmissionLogModel activeAdmission = this.admissionLogRepository
+                .findActiveAdmissionByPatientId(transferPatient.getPatientId())
                 .orElseThrow(() -> new RuntimeException("Internação não encontrada"));
+
+        BedModel nextBed = bedService.findById(transferPatient.getNewBedId());
 
         activeAdmission.setDischargeDate(LocalDateTime.now());
         activeAdmission.setStatus(LogStatus.TRANSFERIDO);
-        activeAdmission.setMoved_to(bedService.findById(bedId));
+        activeAdmission.setMoved_to(nextBed);
         admissionLogRepository.save(activeAdmission);
 
         BedModel bed = activeAdmission.getBed();
         bed.setPatient(null);
         bed.setStatus(BedStatus.AVAILABLE);
         bedService.save(bed);
-
-        BedModel nextBed = bedService.findById(bedId);
 
         if (nextBed.getStatus() != BedStatus.AVAILABLE) {
             throw new IllegalStateException("O leito " + nextBed.getCode() + " não está disponível. ");
@@ -118,8 +120,26 @@ public class AdmissionLogService {
         newAdmission.setAdmissionDate(LocalDateTime.now());
         newAdmission.setDischargeDate(null);
 
-        admissionLogRepository.save(newAdmission);
+        //variáveis para reduzir o tamanho do if
+        String oldBedSpecialty = activeAdmission.getBed().getCode().substring(0, 3);
+        String newBedSpecialty = nextBed.getCode().substring(0, 3);
+        Long oldBedWard = bedService.findWardByBedId(activeAdmission.getBed().getId());
+        Long newBedWard = bedService.findWardByBedId(nextBed.getId());
 
+        //Só exige alteração de médico se houver mudança de ala ou especialidade.
+        if (!oldBedSpecialty.equals(newBedSpecialty) || !oldBedWard.equals(newBedWard)) {
+            if (transferPatient.getDoctor() == null){
+                throw new RuntimeException("Informe o Médico responsável para transferir.");
+            }else{
+                newAdmission.setDoctor(transferPatient.getDoctor());
+            }
+        }else if (transferPatient.getDoctor() != null) {
+            newAdmission.setDoctor(transferPatient.getDoctor());
+        }else{
+            newAdmission.setDoctor(activeAdmission.getDoctor());
+        }
+
+        admissionLogRepository.save(newAdmission);
         return new AdmissionResponseDTO(newAdmission);
     }
 

@@ -22,6 +22,7 @@ public class LogDTO {
     private String hospitalName;
     private LogStatus status;
     private Long moved_to;
+    private Long doctorId;
 
     public LogDTO(LogProjection logProjection) {
         this.patientId = logProjection.getId();
@@ -34,5 +35,6 @@ public class LogDTO {
         this.hospitalName = logProjection.getHospitalName();
         this.status = logProjection.getStatus();
         this.moved_to = logProjection.getMoved_to();
+        this.doctorId = logProjection.getDoctorId();
     }
 }

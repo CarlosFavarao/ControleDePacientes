@@ -42,9 +42,9 @@ public class AdmissionLogController {
         return ResponseEntity.ok(this.admissionLogService.dischargePatient(patientId));
     }
 
-    @PutMapping("/transfer/patient/{patientId}/bed/{bedId}")
-    public ResponseEntity<AdmissionResponseDTO> transferPatient(@PathVariable Long patientId, @PathVariable Long bedId){
-        return ResponseEntity.ok(this.admissionLogService.transferPatient(patientId, bedId));
+    @PutMapping("/transfer")
+    public ResponseEntity<AdmissionResponseDTO> transferPatient(@RequestBody TransferPatientDTO patient){
+        return ResponseEntity.ok(this.admissionLogService.transferPatient(patient));
     }
 
     @PutMapping("/changedoctor/{admissionId}/{doctorId}")
