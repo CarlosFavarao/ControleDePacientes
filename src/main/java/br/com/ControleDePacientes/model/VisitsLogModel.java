@@ -19,8 +19,8 @@ public class VisitsLogModel {
     @Column(name = "entry_date", nullable = false)
     private LocalDateTime entryDate;
 
-    @Column(name = "departure_date", nullable = true)
-    private LocalDateTime departureDate;
+    @Column(name = "exit_date", nullable = true)
+    private LocalDateTime exitDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_visited_id",nullable = false)

@@ -1,6 +1,8 @@
 package br.com.ControleDePacientes.model;
 
+import br.com.ControleDePacientes.validation.ValidDocument;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Entity
@@ -15,9 +17,11 @@ public class VisitorModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @ValidDocument
+    @Column(nullable = false, unique = true)
     private String document;
 }
