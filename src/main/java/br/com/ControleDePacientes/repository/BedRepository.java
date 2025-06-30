@@ -53,8 +53,7 @@ public interface BedRepository extends JpaRepository<BedModel, Long> {
                     "join wards w on r.ward_id = w.id " +
                     "join hospitals h on w.hospital_id = h.id " +
                     "where b.patient_id is null " +
-                    "and w.hospital_id = :hospitalId " +
-                    "and w.specialty = :specialtyName",
+                    "and w.hospital_id = :hospitalId ",
             countQuery = "select count(b.id) " +
                     "from beds b " +
                     "join rooms r on b.room_id = r.id " +
