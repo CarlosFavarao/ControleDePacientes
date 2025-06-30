@@ -33,6 +33,7 @@ public class ExamModel {
     private PatientModel patient;
 
     @ManyToOne
-    @JoinColumn(name = "doctor_id")
-    private DoctorModel responsibleDoctor;
+    @JoinColumn(name = "doctor_id", nullable = false)
+    private DoctorModel doctor;
+
 }

@@ -8,9 +8,9 @@ import java.time.LocalDateTime;
 @Data
 public class ExamDto {
 
-    private String name;
+    private String examName;
     private LocalDateTime dateTime;
     private ExamType type;
-    private Long paientId;
+    private Long patientId;
     private Long doctorId;
 }

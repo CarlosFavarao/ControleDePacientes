@@ -48,6 +48,11 @@ public class AdmissionLogService {
         bed.setStatus(BedStatus.OCCUPIED);
         this.bedService.save(bed);
 
+        //Atualiza o paciente como internado
+        patient.setAdmission(LocalDateTime.now());
+        patient.setResponsibleDoctor(doctor);
+        this.patientService.savePatient(patient);
+
         AdmissionLogModel admissionLog = new AdmissionLogModel();
         admissionLog.setPatient(patient);
         admissionLog.setBed(bed);
@@ -71,6 +76,11 @@ public class AdmissionLogService {
         bed.setPatient(null);
         bed.setStatus(BedStatus.AVAILABLE);
         this.bedService.save(bed);
+
+        PatientModel patient = activeAdmission.getPatient();
+        patient.setAdmission(null);
+        patient.setResponsibleDoctor(null);
+        this.patientService.savePatient(patient);
 
         return new AdmissionResponseDTO(updatedAdmissionLog);
     }

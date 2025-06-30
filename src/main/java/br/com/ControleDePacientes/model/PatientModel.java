@@ -3,6 +3,8 @@ package br.com.ControleDePacientes.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "patients")
 @Getter
@@ -18,8 +20,8 @@ public class PatientModel {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
-    private boolean Admission;
+    @Column
+    private LocalDateTime Admission;
 
     @ManyToOne
     private DoctorModel responsibleDoctor;
