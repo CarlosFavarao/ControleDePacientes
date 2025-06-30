@@ -22,6 +22,7 @@ public class AdmissionLogService {
     @Autowired private PatientService patientService;
     @Autowired private BedService bedService;
     @Autowired private DoctorService doctorService;
+    @Autowired private DoctorHistoryService doctorHistoryService;
     @Autowired private AdmissionLogRepository admissionLogRepository;
 
     @Transactional
@@ -56,8 +57,16 @@ public class AdmissionLogService {
         admissionLog.setDoctor(doctor);
         admissionLog.setAdmissionDate(LocalDateTime.now());
         admissionLog.setDischargeDate(null);
-
         AdmissionLogModel savedLog = this.admissionLogRepository.save(admissionLog);
+
+
+        // Histórico do primeiro médico responsável
+        DoctorHistoryModel history = new DoctorHistoryModel();
+        history.setAdmission(savedLog);
+        history.setDoctor(doctor);
+        history.setStartTime(LocalDateTime.now());
+        this.doctorHistoryService.saveDoctorHistory(history);
+
         return new AdmissionResponseDTO(savedLog);
     }
 
@@ -141,6 +150,20 @@ public class AdmissionLogService {
         if (admission.getDischargeDate() != null) {
             throw new IllegalArgumentException("Não é possível alterar o médico responsável em uma internação já encerrada.");
         }
+
+        // Encerrar o histórico atual
+        DoctorHistoryModel currentHistory =  this.doctorHistoryService.findActiveByAdmission(admission.getId())
+                .orElseThrow(() -> new IllegalStateException("Histórico atual do médico não encontrado."));
+        this.doctorHistoryService.updateDoctorHistory(currentHistory);
+
+        // Cria um novo histórico com novo médico
+        DoctorHistoryModel newHistory = new DoctorHistoryModel();
+        newHistory.setAdmission(admission);
+        newHistory.setDoctor(doctor);
+        newHistory.setStartTime(LocalDateTime.now());
+        this.doctorHistoryService.saveDoctorHistory(newHistory);
+
+        //Atualiza o doutor na log.
         admission.setDoctor(doctor);
         return new AdmissionResponseDTO(this.admissionLogRepository.save(admission));
     }

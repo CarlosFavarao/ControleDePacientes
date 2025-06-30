@@ -26,7 +26,7 @@ public class DoctorService {
 
     @Transactional(readOnly = true)
     public DoctorModel findById(Long id){
-        return doctorRepository.findById(id).orElseThrow(() -> new RuntimeException("Paciente não encontrado."));
+        return doctorRepository.findById(id).orElseThrow(() -> new RuntimeException("Médico não encontrado."));
     }
 
     @Transactional
