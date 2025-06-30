@@ -21,12 +21,13 @@ public class AdmissionLogService {
 
     @Autowired private PatientService patientService;
     @Autowired private BedService bedService;
+    @Autowired private DoctorService doctorService;
     @Autowired private AdmissionLogRepository admissionLogRepository;
 
     @Transactional
     public AdmissionResponseDTO admitPatient(AdmissionRequestDTO admissionRequest){
-        if (admissionRequest.getPatientId() == null || admissionRequest.getBedId() == null) {
-            throw new IllegalArgumentException("ID do Paciente e Id do Leito são obrigatórios.");
+        if (admissionRequest.getPatientId() == null || admissionRequest.getBedId() == null || admissionRequest.getDoctorId() == null) {
+            throw new IllegalArgumentException("ID do Paciente, Id do Leito e Id do Médico são obrigatórios.");
         }
 
         //Verifica se o paciente já está internado
@@ -35,9 +36,10 @@ public class AdmissionLogService {
                     throw new IllegalStateException("Paciente já possui uma internação ativa.");
                 });
 
-        //Busca o paciente o leito para internação (logo abaixo busca o leito também)
+        //Busca o paciente, leito e médico para internação (logo abaixo busca o leito também)
         PatientModel patient = this.patientService.findById(admissionRequest.getPatientId());
         BedModel bed = this.bedService.findById(admissionRequest.getBedId());
+        DoctorModel doctor = this.doctorService.findById(admissionRequest.getDoctorId());
 
         if (bed.getStatus() != BedStatus.AVAILABLE) {
             throw new IllegalStateException("O leito " + bed.getCode() + " não está disponível.");
@@ -51,6 +53,7 @@ public class AdmissionLogService {
         admissionLog.setPatient(patient);
         admissionLog.setBed(bed);
         admissionLog.setStatus(LogStatus.INTERNADO);
+        admissionLog.setDoctor(doctor);
         admissionLog.setAdmissionDate(LocalDateTime.now());
         admissionLog.setDischargeDate(null);
 
@@ -126,5 +129,19 @@ public class AdmissionLogService {
     @Transactional(readOnly = true)
     public Page<BedHistoryDTO> getBedAdmissionHistory(Long bedId, Pageable pageable){
         return this.admissionLogRepository.findBedAdmissionHistoryById(bedId, pageable);
+    }
+
+    //Muda o doutor responsável pela internação
+    public AdmissionResponseDTO changeDoctor(Long admissionId, Long doctorId) {
+        //Busca a log e o Doutor
+        DoctorModel doctor = this.doctorService.findById(doctorId);
+        AdmissionLogModel admission = this.admissionLogRepository.findById(admissionId).orElseThrow(() -> new RuntimeException("Internação não encontrada."));
+
+        //Verifica se a internação está ativa
+        if (admission.getDischargeDate() != null) {
+            throw new IllegalArgumentException("Não é possível alterar o médico responsável em uma internação já encerrada.");
+        }
+        admission.setDoctor(doctor);
+        return new AdmissionResponseDTO(this.admissionLogRepository.save(admission));
     }
 }

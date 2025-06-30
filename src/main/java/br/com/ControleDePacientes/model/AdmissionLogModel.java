@@ -39,4 +39,7 @@ public class AdmissionLogModel {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "moved_to", nullable = true)
     private BedModel moved_to;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "doctor_id", nullable = false)
+    private DoctorModel doctor;
 }
