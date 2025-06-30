@@ -92,6 +92,7 @@ public class AdmissionLogService {
         return this.admissionLogRepository.findBedAdmissionHistoryById(bedId, pageable);
     }
 
+    //Muda o doutor responsável pela internação
     public AdmissionResponseDTO changeDoctor(Long admissionId, Long doctorId) {
         //Busca a log e o Doutor
         DoctorModel doctor = this.doctorService.findById(doctorId);
