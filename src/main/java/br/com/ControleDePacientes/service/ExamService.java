@@ -9,10 +9,13 @@ import br.com.ControleDePacientes.repository.DoctorRepository;
 import br.com.ControleDePacientes.repository.ExamRepository;
 import br.com.ControleDePacientes.repository.PatientRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ExamService {
@@ -26,7 +29,7 @@ public class ExamService {
     @Autowired
     private DoctorRepository doctorRepository;
 
-
+    @Transactional
     public void ScheduleExam(ExamDto dto) {
         PatientModel patientModel = patientRepository.findById(dto.getPatientId())
                 .orElseThrow(() -> new RuntimeException("Paciente não encontrado."));
@@ -56,17 +59,42 @@ public class ExamService {
         examModel.setExamName(dto.getExamName());
         examModel.setDateTime(dto.getDateTime());
         examModel.setType(dto.getType());
-        examModel.setStatus(ExamStatus.ACCOMPLISHED);
+        examModel.setStatus(ExamStatus.SCHEDULED);
         examModel.setPatient(patientModel);
         examModel.setDoctor(doctorModel);
 
         examRepository.save(examModel);
     }
 
+    @Transactional
     public void deleteExam(Long id) {
         ExamModel exam = examRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Exame não encontrado com id " + id));
 
         examRepository.delete(exam);
     }
+
+    @Transactional
+    public List<ExamDto> listExamsByPatients(Long patientId) {
+        PatientModel patient = patientRepository.findById(patientId)
+                .orElseThrow(() -> new RuntimeException("Paciente não encontrado."));
+
+        List<ExamModel> exam = examRepository.findByPatient(patient);
+
+        if (exam.isEmpty()) {
+        throw new RuntimeException("O paciente não tem exame agendado.");
+        }
+
+        return exam.stream().map(exams -> {
+            ExamDto dto = new ExamDto();
+            dto.setExamName(exams.getExamName());
+            dto.setDateTime(exams.getDateTime());
+            dto.setType(exams.getType());
+            dto.setStatus(exams.getStatus());
+            dto.setPatientId(exams.getPatient().getId());
+            dto.setDoctorId(exams.getDoctor().getId());
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
 }

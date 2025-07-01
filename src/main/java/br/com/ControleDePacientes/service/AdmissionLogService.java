@@ -77,6 +77,7 @@ public class AdmissionLogService {
         bed.setStatus(BedStatus.AVAILABLE);
         this.bedService.save(bed);
 
+        //Faz a validação, para quando der a alta ele limpar o campo Admission e o campo ResponsibleDoctor
         PatientModel patient = activeAdmission.getPatient();
         patient.setAdmission(null);
         patient.setResponsibleDoctor(null);
