@@ -23,12 +23,28 @@ public class VisitsLogController {
         return ResponseEntity.ok(this.visitsLogService.registerVisit(visitRequest));
     }
 
-//    @GetMapping("/currently-visited") //Exibir os pacientes visitados atualmente
-//    public ResponseEntity<List<VisitsLogResponseDTO>> getCurrentlyVisitedPatients(){
-//        return ResponseEntity.ok(this.visitsLogService.getCurrentlyVisitedPatients());
-//    }
+    @GetMapping("/history/patient/{patientId}") //Exibir histórico de visitas do ID do paciente
+    public ResponseEntity<List<VisitsLogResponseDTO>> getVisitByPatientId(@PathVariable Long patientId){
+        return ResponseEntity.ok(this.visitsLogService.getVisitByPatientId(patientId));
+    }
 
-    @PutMapping("/unregister/{visitorId}") //Liberar visita
+    @GetMapping("/history/visitor/{visitorId}") //Exibir histórico de visitas através do ID do visitante
+    public ResponseEntity<List<VisitsLogResponseDTO>> getVisitByVisitorId(@PathVariable Long visitorId){
+        return ResponseEntity.ok(this.visitsLogService.getVisitByVisitorId(visitorId));
+    }
+
+
+    @GetMapping("/currently-visited") //Exibir as visitas ativas atualmente
+    public ResponseEntity<List<VisitsLogResponseDTO>> getCurrentlyVisitedPatients(){
+        return ResponseEntity.ok(this.visitsLogService.getCurrentlyVisitedPatients());
+    }
+
+    @GetMapping("/closed-visits") //Exibir as visitas encerradas
+    public ResponseEntity<List<VisitsLogResponseDTO>> getClosedVisits(){
+        return ResponseEntity.ok(this.visitsLogService.getClosedVisits());
+    }
+
+    @PutMapping("/release/{visitorId}") //Liberar visita
     public ResponseEntity<VisitsLogResponseDTO> unregisterVisit(@PathVariable Long visitorId){
         return ResponseEntity.ok(this.visitsLogService.unregisterVisit(visitorId));
     }

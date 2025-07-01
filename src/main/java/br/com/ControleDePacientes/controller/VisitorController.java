@@ -31,7 +31,7 @@ public class VisitorController {
     }
 
     @GetMapping
-    public List<VisitorModel> listAllPatients(){
+    public List<VisitorModel> listAllVisitors(){
         return this.visitorService.listVisitors();
     }
 

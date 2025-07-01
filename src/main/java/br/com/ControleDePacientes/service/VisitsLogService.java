@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class VisitsLogService {
@@ -28,6 +30,7 @@ public class VisitsLogService {
     public void setVisitorService(@Lazy VisitorService visitorService) {
         this.visitorService = visitorService;
     }
+
 
     @Transactional(readOnly = true)
     public VisitsLogModel findByVisitorId(Long patientId) { //Encontrar log pelo id do visitante
@@ -83,6 +86,27 @@ public class VisitsLogService {
         return new VisitsLogResponseDTO(updatedVisitLog);
     }
 
+    @Transactional(readOnly = true)
+    public List<VisitsLogResponseDTO> getCurrentlyVisitedPatients(){
+        return this.visitsLogRepository.findAllActiveVisits()
+                .stream().map(VisitsLogResponseDTO::new).collect(Collectors.toList());
+    }
 
+    @Transactional(readOnly = true)
+    public List<VisitsLogResponseDTO> getClosedVisits(){
+        return this.visitsLogRepository.findAllClosedVisits()
+                .stream().map(VisitsLogResponseDTO::new).collect(Collectors.toList());
+    }
 
+    @Transactional(readOnly = true)
+    public List<VisitsLogResponseDTO> getVisitByVisitorId(Long visitorId) { //Encontrar log pelo id do visitante
+        return this.visitsLogRepository.getVisitByVisitorId(visitorId)
+                .stream().map(VisitsLogResponseDTO::new).collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<VisitsLogResponseDTO> getVisitByPatientId(Long patientId) { //Encontrar log pelo id do visitante
+        return this.visitsLogRepository.getVisitByPatientId(patientId)
+                .stream().map(VisitsLogResponseDTO::new).collect(Collectors.toList());
+    }
 }
