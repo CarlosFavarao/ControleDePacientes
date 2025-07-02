@@ -26,24 +26,20 @@ public interface VisitsLogRepository extends JpaRepository<VisitsLogModel, Long>
 
     @Query("SELECT vl FROM VisitsLogModel vl " +
             "JOIN FETCH vl.patient p " +
-            "JOIN FETCH vl.visitor v " +
             "WHERE p.id = :patientId AND vl.exitDate IS NULL")
     Optional<VisitsLogModel> findActiveVisitByPatientId(@Param("patientId") Long patientId);
 
     @Query("SELECT vl FROM VisitsLogModel vl " +
-            "JOIN FETCH vl.patient p " +
             "JOIN FETCH vl.visitor v " +
             "WHERE v.id = :visitorId AND vl.exitDate IS NULL")
     Optional<VisitsLogModel> findActiveVisitByVisitorId(@Param("visitorId") Long visitorId);
 
     @Query("SELECT vl FROM VisitsLogModel vl " +
             "JOIN FETCH vl.patient p " +
-            "JOIN FETCH vl.visitor v " +
             "WHERE p.id = :patientId")
     List<VisitsLogModel> getVisitByPatientId(@Param("patientId") Long patientId);
 
     @Query("SELECT vl FROM VisitsLogModel vl " +
-            "JOIN FETCH vl.patient p " +
             "JOIN FETCH vl.visitor v " +
             "WHERE v.id = :visitorId")
     List<VisitsLogModel> getVisitByVisitorId(@Param("visitorId") Long visitorId);

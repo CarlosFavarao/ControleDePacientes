@@ -49,16 +49,15 @@ public class VisitsLogService {
                     throw new IllegalStateException("Paciente já possui uma visita em andamento.");
                 });
 
-        //Busca o paciente com internação ativa e o visitante para registrar a visita
-        VisitorModel visitor = visitorService.findById(visitsLogRequestDTO.getVisitorId());
-        PatientModel patient = patientService.findById(visitsLogRequestDTO.getPatientId());
-
         //Busca se o visitante está visitando algum outro paciente
         this.visitsLogRepository.findActiveVisitByVisitorId(visitsLogRequestDTO.getVisitorId())
                 .ifPresent(visit -> {
                     throw new IllegalStateException("Visitante já está visitando outro paciente.");
                 });
 
+        //Busca o paciente com internação ativa e o visitante para registrar a visita
+        VisitorModel visitor = visitorService.findById(visitsLogRequestDTO.getVisitorId());
+        PatientModel patient = patientService.findById(visitsLogRequestDTO.getPatientId());
 
         if (bedService.findActiveBedByPatientId(patient.getId()).isEmpty()) {
             throw new IllegalArgumentException("Paciente não possui internação ativa.");
@@ -70,9 +69,7 @@ public class VisitsLogService {
         visitsLog.setPatient(patient);
         visitsLog.setVisitor(visitor);
 
-        VisitsLogModel savedVisitLog = this.visitsLogRepository.save(visitsLog);
-
-        return new VisitsLogResponseDTO(savedVisitLog);
+        return new VisitsLogResponseDTO(this.visitsLogRepository.save(visitsLog));
 
     }
 
