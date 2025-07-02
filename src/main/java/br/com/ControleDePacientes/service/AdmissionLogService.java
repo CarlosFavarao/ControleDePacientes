@@ -98,6 +98,10 @@ public class AdmissionLogService {
 
         BedModel nextBed = bedService.findById(transferPatient.getNewBedId());
 
+        if (nextBed.getStatus() != BedStatus.AVAILABLE) {
+            throw new IllegalStateException("O leito " + nextBed.getCode() + " não está disponível. ");
+        }
+
         activeAdmission.setDischargeDate(LocalDateTime.now());
         activeAdmission.setStatus(LogStatus.TRANSFERIDO);
         activeAdmission.setMoved_to(nextBed);
@@ -108,10 +112,6 @@ public class AdmissionLogService {
         bed.setStatus(BedStatus.AVAILABLE);
         bedService.save(bed);
 
-        if (nextBed.getStatus() != BedStatus.AVAILABLE) {
-            throw new IllegalStateException("O leito " + nextBed.getCode() + " não está disponível. ");
-        }
-
         AdmissionLogModel newAdmission = new AdmissionLogModel();
         newAdmission.setPatient(activeAdmission.getPatient());
         newAdmission.setStatus(LogStatus.INTERNADO);
@@ -120,14 +120,15 @@ public class AdmissionLogService {
         newAdmission.setAdmissionDate(LocalDateTime.now());
         newAdmission.setDischargeDate(null);
 
-        //variáveis para reduzir o tamanho do if
         String oldBedSpecialty = activeAdmission.getBed().getCode().substring(0, 3);
         String newBedSpecialty = nextBed.getCode().substring(0, 3);
         Long oldBedWard = bedService.findWardByBedId(activeAdmission.getBed().getId());
         Long newBedWard = bedService.findWardByBedId(nextBed.getId());
 
+        boolean theresChange = oldBedSpecialty != newBedSpecialty || oldBedWard != newBedWard;
+
         //Só exige alteração de médico se houver mudança de ala ou especialidade.
-        if (!oldBedSpecialty.equals(newBedSpecialty) || !oldBedWard.equals(newBedWard)) {
+        if (theresChange) {
             if (transferPatient.getDoctor() == null){
                 throw new RuntimeException("Informe o Médico responsável para transferir.");
             }else{

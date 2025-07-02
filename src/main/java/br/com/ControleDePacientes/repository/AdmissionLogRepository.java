@@ -1,7 +1,6 @@
 package br.com.ControleDePacientes.repository;
 
 import br.com.ControleDePacientes.dto.BedHistoryDTO;
-import br.com.ControleDePacientes.dto.PatientLocationDTO;
 import br.com.ControleDePacientes.model.AdmissionLogModel;
 import br.com.ControleDePacientes.projections.LogProjection;
 import org.springframework.data.domain.Page;
@@ -44,14 +43,14 @@ public interface AdmissionLogRepository extends JpaRepository<AdmissionLogModel,
             "   r.id = b.room_id " +
             "join wards w on " +
             "   w.id = r.ward_id " +
-             "join hospitals h on " +
-                "h.id = w.hospital_id " +
+            "join hospitals h on " +
+            "   h.id = w.hospital_id " +
             "where " +
             "   al.discharge_date is null " +
             "order by " +
             "   w.specialty, " +
-            "   p.name" +
-            ",    al.admission_date;")
+            "   p.name, " +
+            "   al.admission_date;")
     List<LogProjection> findActiveAdmissions();
 
     //Faz o retorno de forma páginada do histórico de um paciente
