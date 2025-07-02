@@ -1,5 +1,6 @@
 package br.com.ControleDePacientes.dto;
 
+import br.com.ControleDePacientes.enums.BedType;
 import br.com.ControleDePacientes.enums.SpecialtyEnum;
 import lombok.Data;
 
@@ -9,4 +10,5 @@ public class WardCreateRequestDTO {
     private Long hospitalId;
     private int numberOfRooms;
     private int bedsPerRoom;
+    private BedType bedType;
 }

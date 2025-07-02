@@ -5,6 +5,7 @@ import br.com.ControleDePacientes.dto.SpecialtyRoomStatsDTO;
 import br.com.ControleDePacientes.dto.WardCreateRequestDTO;
 import br.com.ControleDePacientes.dto.WardResponseDTO;
 import br.com.ControleDePacientes.enums.BedStatus;
+import br.com.ControleDePacientes.enums.BedType;
 import br.com.ControleDePacientes.enums.RoomStatus;
 import br.com.ControleDePacientes.enums.SpecialtyEnum;
 import br.com.ControleDePacientes.model.BedModel;
@@ -30,8 +31,8 @@ public class WardService {
     @Autowired private BedService bedService;
 
     @Transactional
-    public WardModel createWardWithRoomsAndBeds(WardCreateRequestDTO dto){ //Cria as Alas com Quartos e leitos prontos, funciona bem porém...
-        if (dto.getHospitalId() == null                                    //É carregado e complexo, foi o que deu para fazer... Bem legal a lógica de tudo.
+    public WardModel createWardWithRoomsAndBeds(WardCreateRequestDTO dto){ //Cria as Alas com Quartos e leitos prontos,
+        if (dto.getHospitalId() == null                                    //inclusive com tipo de leito (Enfermaria ou UTI)
                 || dto.getSpecialty() == null
                 || dto.getNumberOfRooms() <= 0
                 || dto.getBedsPerRoom() <= 0){
@@ -77,6 +78,7 @@ public class WardService {
                 newBed.setStatus(BedStatus.AVAILABLE);
                 newBed.setRoom(savedRoom);
                 newBed.setPatient(null);
+                newBed.setBedType(dto.getBedType());
                 bedService.save(newBed);
             }
         }

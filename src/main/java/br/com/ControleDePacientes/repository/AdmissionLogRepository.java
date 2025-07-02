@@ -1,7 +1,6 @@
 package br.com.ControleDePacientes.repository;
 
 import br.com.ControleDePacientes.dto.BedHistoryDTO;
-import br.com.ControleDePacientes.dto.PatientLocationDTO;
 import br.com.ControleDePacientes.model.AdmissionLogModel;
 import br.com.ControleDePacientes.projections.LogProjection;
 import org.springframework.data.domain.Page;
@@ -23,13 +22,15 @@ public interface AdmissionLogRepository extends JpaRepository<AdmissionLogModel,
     Optional<AdmissionLogModel> findActiveAdmissionByPatientId(@Param("patientId") Long patientId);
 
     //Lista pacientes internados no momento, ordenados por ala e alfabeticamente.
-    @Query(nativeQuery = true, value = //Query nativa, estudar mais sobre isso. É muito mais eficiente e reduz muitas linhas de código.
+    @Query(nativeQuery = true, value =
             "select " +
             "   p.id, " +
             "   p.name, " +
             "   r.code, " +
             "   w.specialty, " +
+            "   al.status as status, " +
             "   al.admission_date as admissionDate, " +
+            "   al.doctor_id as doctor_id, " +
             "   date (now()) - date (al.admission_date) as daysAdmitted, " +
             "   h.name as hospitalName " +
             "from " +
@@ -42,17 +43,17 @@ public interface AdmissionLogRepository extends JpaRepository<AdmissionLogModel,
             "   r.id = b.room_id " +
             "join wards w on " +
             "   w.id = r.ward_id " +
-             "join hospitals h on " +
-                "h.id = w.hospital_id " +
+            "join hospitals h on " +
+            "   h.id = w.hospital_id " +
             "where " +
             "   al.discharge_date is null " +
             "order by " +
             "   w.specialty, " +
-            "   name, " +
-            "   admission_date;")
+            "   p.name, " +
+            "   al.admission_date;")
     List<LogProjection> findActiveAdmissions();
 
-    //Faz o retorno de forma páginada do histórico de um usuário
+    //Faz o retorno de forma páginada do histórico de um paciente
     @Query(nativeQuery = true, value =
     "select " +
             "p.id as id, " +
@@ -61,6 +62,9 @@ public interface AdmissionLogRepository extends JpaRepository<AdmissionLogModel,
             "w.specialty as specialty, " +
             "al.admission_date as admissionDate, " +
             "al.discharge_date as dischargeDate, " +
+            "al.status as status, " +
+            "al.moved_to as moved_to, " +
+            "al.doctor_id as doctor_id, " +
             "h.name as hospitalName, " +
             "case " +
             "when al.discharge_date is not null then cast(DATE_PART('day', al.discharge_date - al.admission_date) as INTEGER) " +

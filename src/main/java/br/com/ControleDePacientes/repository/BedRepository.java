@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface BedRepository extends JpaRepository<BedModel, Long> {
@@ -27,6 +28,7 @@ public interface BedRepository extends JpaRepository<BedModel, Long> {
                     "b.id as bedId, " +
                     "b.code as bedCode, " +
                     "b.status as bedStatus, " +
+                    "b.bed_type as bedType, " +
                     "r.id as roomId, " +
                     "r.code as roomCode " +
                     "from beds b " +
@@ -45,14 +47,14 @@ public interface BedRepository extends JpaRepository<BedModel, Long> {
                     "r.id as roomId, " +
                     "r.code as roomCode, " +
                     "b.id as bedId, " +
-                    "b.code as bedCode " +
+                    "b.code as bedCode, " +
+                    "b.bed_type as bedType " +
                     "from beds b " +
                     "join rooms r on b.room_id = r.id " +
                     "join wards w on r.ward_id = w.id " +
                     "join hospitals h on w.hospital_id = h.id " +
                     "where b.patient_id is null " +
-                    "and w.hospital_id = :hospitalId " +
-                    "and w.specialty = :specialtyName",
+                    "and w.hospital_id = :hospitalId ",
             countQuery = "select count(b.id) " +
                     "from beds b " +
                     "join rooms r on b.room_id = r.id " +
@@ -68,7 +70,8 @@ public interface BedRepository extends JpaRepository<BedModel, Long> {
             "r.id as roomId, " +
             "r.code as roomCode, " +
             "b.id as bedId, " +
-            "b.code as bedCode " +
+            "b.code as bedCode, " +
+            "b.bed_type as bedType " +
             "from beds b " +
             "join rooms r on b.room_id = r.id " +
             "join wards w on r.ward_id = w.id " +
@@ -82,4 +85,10 @@ public interface BedRepository extends JpaRepository<BedModel, Long> {
             "join wards w on r.ward_id = w.id " +
             "where b.patient_id is null and w.hospital_id = :hospitalId and w.specialty = :specialtyName")
     Page<AvailableBedProjection> findAvailableBedsByHospitalIdAndSpecialty(@RequestParam("hospitalId") Long hospitalId, @RequestParam("specialtyName") String specialtyName, Pageable pageable);
+
+    @Query(nativeQuery = true, value=
+            "select r.ward_id from beds b " +
+            "join rooms r ON b.room_id = r.id " +
+            "where b.id = :bedId")
+    Optional<Long> findWardIdByBedId(@RequestParam("bedId") Long bedId);
 }

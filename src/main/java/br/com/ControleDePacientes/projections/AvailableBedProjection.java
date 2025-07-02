@@ -1,6 +1,7 @@
 package br.com.ControleDePacientes.projections;
 
 import br.com.ControleDePacientes.enums.BedStatus;
+import br.com.ControleDePacientes.enums.BedType;
 import br.com.ControleDePacientes.enums.SpecialtyEnum;
 
 public interface AvailableBedProjection {
@@ -11,4 +12,5 @@ public interface AvailableBedProjection {
     String getBedCode();
     Long getRoomId();
     String getRoomCode();
+    BedType getBedType();
 }

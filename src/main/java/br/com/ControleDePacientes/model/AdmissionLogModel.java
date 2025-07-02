@@ -1,5 +1,6 @@
 package br.com.ControleDePacientes.model;
 
+import br.com.ControleDePacientes.enums.LogStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,4 +32,15 @@ public class AdmissionLogModel {
     @JoinColumn(name = "patient_id", nullable = false)
     private PatientModel patient;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private LogStatus status;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "moved_to", nullable = true)
+    private BedModel moved_to;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "doctor_id", nullable = false)
+    private DoctorModel doctor;
 }

@@ -1,6 +1,7 @@
 package br.com.ControleDePacientes.dto;
 
 import br.com.ControleDePacientes.enums.BedStatus;
+import br.com.ControleDePacientes.enums.BedType;
 import br.com.ControleDePacientes.model.BedModel;
 import lombok.Data;
 
@@ -11,6 +12,7 @@ public class BedResponseDTO {
     private Long id;
     private String code;
     private BedStatus status;
+    private BedType bedType;
     private Long roomId;
     private String roomCode;
     private Long patientId;
@@ -22,6 +24,7 @@ public class BedResponseDTO {
         this.id = bed.getId();
         this.code = bed.getCode();
         this.status = bed.getStatus();
+        this.bedType = bed.getBedType();
         if (bed.getRoom() != null) {
             this.roomId = bed.getRoom().getId();
             this.roomCode = bed.getRoom().getCode();
