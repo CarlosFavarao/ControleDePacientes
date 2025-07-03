@@ -74,23 +74,21 @@ public class VisitsLogService {
     }
 
     @Transactional
-    public VisitsLogResponseDTO unregisterVisit(Long visitorId){
+    public VisitsLogResponseDTO unregisterVisit(Long visitorId) {
         VisitsLogModel activeVisit = this.visitsLogRepository.findActiveVisitByVisitorId(visitorId).orElseThrow(() -> new RuntimeException("Visitante ativo não encontrado"));
-
         activeVisit.setExitDate(LocalDateTime.now());
-        VisitsLogModel updatedVisitLog = this.visitsLogRepository.save(activeVisit);
 
-        return new VisitsLogResponseDTO(updatedVisitLog);
+        return new VisitsLogResponseDTO(this.visitsLogRepository.save(activeVisit));
     }
 
     @Transactional(readOnly = true)
-    public List<VisitsLogResponseDTO> getCurrentlyVisitedPatients(){
+    public List<VisitsLogResponseDTO> getCurrentlyVisitedPatients() {
         return this.visitsLogRepository.findAllActiveVisits()
                 .stream().map(VisitsLogResponseDTO::new).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public List<VisitsLogResponseDTO> getClosedVisits(){
+    public List<VisitsLogResponseDTO> getClosedVisits() {
         return this.visitsLogRepository.findAllClosedVisits()
                 .stream().map(VisitsLogResponseDTO::new).collect(Collectors.toList());
     }
