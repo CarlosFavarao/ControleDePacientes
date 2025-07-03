@@ -35,4 +35,8 @@ public class VisitorController {
         return this.visitorService.listVisitors();
     }
 
+    @DeleteMapping("/{id}")
+    public void deleteVisitor(@PathVariable Long id){
+        this.visitorService.deleteVisitor(id);
+    }
 }

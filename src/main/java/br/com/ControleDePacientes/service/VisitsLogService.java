@@ -33,8 +33,8 @@ public class VisitsLogService {
 
 
     @Transactional(readOnly = true)
-    public VisitsLogModel findByVisitorId(Long patientId) { //Encontrar log pelo id do visitante
-        return this.visitsLogRepository.findByVisitorId(patientId);
+    public VisitsLogModel findByVisitorId(Long visitorId) { //Encontrar log pelo id do visitante
+        return this.visitsLogRepository.findByVisitorId(visitorId);
     }
 
     @Transactional

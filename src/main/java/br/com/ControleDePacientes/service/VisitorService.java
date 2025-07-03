@@ -44,4 +44,11 @@ public class VisitorService {
         return visitorRepository.findById(id).orElseThrow(() -> new RuntimeException("Visitante não encontrado."));
     }
 
+    @Transactional
+    public void deleteVisitor(Long id) {
+        if (visitsLogService.findByVisitorId(id) != null) {
+            throw new IllegalArgumentException("Visitante não pode ser excluído pois já possui visitas registradas.");
+        }
+        this.visitorRepository.deleteById(id);
+    }
 }
