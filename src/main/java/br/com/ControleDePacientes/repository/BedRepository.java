@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface BedRepository extends JpaRepository<BedModel, Long> {
@@ -36,6 +37,10 @@ public interface BedRepository extends JpaRepository<BedModel, Long> {
                     "where b.status = 'AVAILABLE' " +
                     "order by w.specialty;")
     Page<AvailableBedProjection> findAvailableBeds(Pageable pageable);
+
+    @Query("SELECT b FROM BedModel b WHERE b.patient.id = :patientId AND b.status = 'OCCUPIED'")
+    Optional<BedModel> findActiveBedByPatientId(@Param("patientId") Long patientId);
+
 
     @Query(nativeQuery = true, value =
             "select " +

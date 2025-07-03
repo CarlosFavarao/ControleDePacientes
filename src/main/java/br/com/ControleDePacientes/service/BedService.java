@@ -41,6 +41,11 @@ public class BedService {
     }
 
     @Transactional(readOnly = true)
+    public Optional<BedResponseDTO> findActiveBedByPatientId(Long id){
+        return this.bedRepository.findActiveBedByPatientId(id).map(BedResponseDTO::new);
+    }
+
+    @Transactional(readOnly = true)
     public Page<BedResponseDTO> findBedsByHospitalId(Long hospitalId, Pageable pageable){
         Page<BedModel> beds = this.bedRepository.findBedsByHospitalId(hospitalId, pageable);
 
