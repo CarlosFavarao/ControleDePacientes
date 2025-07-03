@@ -33,7 +33,6 @@ public class DoctorService {
     public DoctorModel updateDoctor(Long id, DoctorModel updateddoctor){
         DoctorModel doctor = this.findById(id);
         doctor.setSpecialty(updateddoctor.getSpecialty());
-
         return this.doctorRepository.save(doctor);
     }
 
