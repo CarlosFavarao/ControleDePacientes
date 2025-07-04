@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class DoctorHistoryModel {
+public class DoctorLogModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

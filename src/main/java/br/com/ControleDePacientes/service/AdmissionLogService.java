@@ -21,7 +21,7 @@ public class AdmissionLogService {
     @Autowired private PatientService patientService;
     @Autowired private BedService bedService;
     @Autowired private DoctorService doctorService;
-    @Autowired private DoctorHistoryService doctorHistoryService;
+    @Autowired private DoctorLogService doctorLogService;
     @Autowired private AdmissionLogRepository admissionLogRepository;
 
     @Transactional
@@ -52,18 +52,18 @@ public class AdmissionLogService {
         AdmissionLogModel admissionLog = new AdmissionLogModel();
         admissionLog.setPatient(patient);
         admissionLog.setBed(bed);
-        admissionLog.setDoctor(doctor);
+        admissionLog.setActiveDoctor(doctor);
         admissionLog.setAdmissionDate(LocalDateTime.now());
         admissionLog.setDischargeDate(null);
         AdmissionLogModel savedLog = this.admissionLogRepository.save(admissionLog);
 
 
         // Histórico do primeiro médico responsável
-        DoctorHistoryModel history = new DoctorHistoryModel();
+        DoctorLogModel history = new DoctorLogModel();
         history.setAdmission(savedLog);
         history.setDoctor(doctor);
         history.setStartTime(LocalDateTime.now());
-        this.doctorHistoryService.saveDoctorHistory(history);
+        this.doctorLogService.saveDoctorLog(history);
 
         return new AdmissionResponseDTO(savedLog);
     }
@@ -102,7 +102,7 @@ public class AdmissionLogService {
     }
 
     //Muda o doutor responsável pela internação
-    public AdmissionResponseDTO changeDoctor(Long admissionId, Long doctorId) {
+    public AdmissionResponseDTO changeActiveDoctor(Long admissionId, Long doctorId) {
         //Busca a log e o Doutor
         DoctorModel doctor = this.doctorService.findById(doctorId);
         AdmissionLogModel admission = this.admissionLogRepository.findById(admissionId).orElseThrow(() -> new RuntimeException("Internação não encontrada."));
@@ -113,19 +113,19 @@ public class AdmissionLogService {
         }
 
         // Encerrar o histórico atual
-        DoctorHistoryModel currentHistory =  this.doctorHistoryService.findActiveByAdmission(admission.getId())
+        DoctorLogModel currentHistory =  this.doctorLogService.findActiveByAdmission(admission.getId())
                 .orElseThrow(() -> new IllegalStateException("Histórico atual do médico não encontrado."));
-        this.doctorHistoryService.updateDoctorHistory(currentHistory);
+        this.doctorLogService.finishDoctorLog(currentHistory);
 
         // Cria um novo histórico com novo médico
-        DoctorHistoryModel newHistory = new DoctorHistoryModel();
+        DoctorLogModel newHistory = new DoctorLogModel();
         newHistory.setAdmission(admission);
         newHistory.setDoctor(doctor);
         newHistory.setStartTime(LocalDateTime.now());
-        this.doctorHistoryService.saveDoctorHistory(newHistory);
+        this.doctorLogService.saveDoctorLog(newHistory);
 
         //Atualiza o doutor na log.
-        admission.setDoctor(doctor);
+        admission.setActiveDoctor(doctor);
         return new AdmissionResponseDTO(this.admissionLogRepository.save(admission));
     }
 }

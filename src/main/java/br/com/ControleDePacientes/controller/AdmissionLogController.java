@@ -44,6 +44,6 @@ public class AdmissionLogController {
 
     @PutMapping("/changedoctor/{admissionId}/{doctorId}")
     public ResponseEntity<AdmissionResponseDTO> changeDoctor(@PathVariable Long admissionId, @PathVariable Long doctorId) {
-        return ResponseEntity.ok(this.admissionLogService.changeDoctor(admissionId, doctorId));
+        return ResponseEntity.ok(this.admissionLogService.changeActiveDoctor(admissionId, doctorId));
     }
 }
