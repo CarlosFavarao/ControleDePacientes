@@ -20,12 +20,14 @@ public class AdmissionLogService {
 
     @Autowired private PatientService patientService;
     @Autowired private BedService bedService;
+    @Autowired private DoctorService doctorService;
+    @Autowired private DoctorLogService doctorLogService;
     @Autowired private AdmissionLogRepository admissionLogRepository;
 
     @Transactional
     public AdmissionResponseDTO admitPatient(AdmissionRequestDTO admissionRequest){
-        if (admissionRequest.getPatientId() == null || admissionRequest.getBedId() == null) {
-            throw new IllegalArgumentException("ID do Paciente e Id do Leito são obrigatórios.");
+        if (admissionRequest.getPatientId() == null || admissionRequest.getBedId() == null || admissionRequest.getDoctorId() == null) {
+            throw new IllegalArgumentException("ID do Paciente, Id do Leito e Id do Médico são obrigatórios.");
         }
 
         //Verifica se o paciente já está internado
@@ -34,9 +36,10 @@ public class AdmissionLogService {
                     throw new IllegalStateException("Paciente já possui uma internação ativa.");
                 });
 
-        //Busca o paciente o leito para internação (logo abaixo busca o leito também)
+        //Busca o paciente, leito e médico para internação (logo abaixo busca o leito também)
         PatientModel patient = this.patientService.findById(admissionRequest.getPatientId());
         BedModel bed = this.bedService.findById(admissionRequest.getBedId());
+        DoctorModel doctor = this.doctorService.findById(admissionRequest.getDoctorId());
 
         if (bed.getStatus() != BedStatus.AVAILABLE) {
             throw new IllegalStateException("O leito " + bed.getCode() + " não está disponível.");
@@ -49,13 +52,21 @@ public class AdmissionLogService {
         AdmissionLogModel admissionLog = new AdmissionLogModel();
         admissionLog.setPatient(patient);
         admissionLog.setBed(bed);
+        admissionLog.setActiveDoctor(doctor);
         admissionLog.setAdmissionDate(LocalDateTime.now());
         admissionLog.setDischargeDate(null);
-
         AdmissionLogModel savedLog = this.admissionLogRepository.save(admissionLog);
+
+
+        // Histórico do primeiro médico responsável
+        DoctorLogModel history = new DoctorLogModel();
+        history.setAdmission(savedLog);
+        history.setDoctor(doctor);
+        history.setStartTime(LocalDateTime.now());
+        this.doctorLogService.saveDoctorLog(history);
+
         return new AdmissionResponseDTO(savedLog);
     }
-
 
     //Dar alta
     @Transactional
@@ -88,5 +99,33 @@ public class AdmissionLogService {
     @Transactional(readOnly = true)
     public Page<BedHistoryDTO> getBedAdmissionHistory(Long bedId, Pageable pageable){
         return this.admissionLogRepository.findBedAdmissionHistoryById(bedId, pageable);
+    }
+
+    //Muda o doutor responsável pela internação
+    public AdmissionResponseDTO changeActiveDoctor(Long admissionId, Long doctorId) {
+        //Busca a log e o Doutor
+        DoctorModel doctor = this.doctorService.findById(doctorId);
+        AdmissionLogModel admission = this.admissionLogRepository.findById(admissionId).orElseThrow(() -> new RuntimeException("Internação não encontrada."));
+
+        //Verifica se a internação está ativa
+        if (admission.getDischargeDate() != null) {
+            throw new IllegalArgumentException("Não é possível alterar o médico responsável em uma internação já encerrada.");
+        }
+
+        // Encerrar o histórico atual
+        DoctorLogModel currentHistory =  this.doctorLogService.findActiveByAdmission(admission.getId())
+                .orElseThrow(() -> new IllegalStateException("Histórico atual do médico não encontrado."));
+        this.doctorLogService.finishDoctorLog(currentHistory);
+
+        // Cria um novo histórico com novo médico
+        DoctorLogModel newHistory = new DoctorLogModel();
+        newHistory.setAdmission(admission);
+        newHistory.setDoctor(doctor);
+        newHistory.setStartTime(LocalDateTime.now());
+        this.doctorLogService.saveDoctorLog(newHistory);
+
+        //Atualiza o doutor na log.
+        admission.setActiveDoctor(doctor);
+        return new AdmissionResponseDTO(this.admissionLogRepository.save(admission));
     }
 }

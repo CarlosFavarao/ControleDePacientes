@@ -31,4 +31,7 @@ public class AdmissionLogModel {
     @JoinColumn(name = "patient_id", nullable = false)
     private PatientModel patient;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "doctor_id", nullable = false)
+    private DoctorModel activeDoctor;
 }
