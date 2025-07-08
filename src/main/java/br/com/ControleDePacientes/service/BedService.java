@@ -71,7 +71,7 @@ public class BedService {
 
     @Transactional(readOnly = true)
     public Long findWardByBedId(Long bedId){
-        return bedRepository.findWardIdByBedId(bedId)
+        return this.bedRepository.findWardIdByBedId(bedId)
                 .orElseThrow(() -> new EntityNotFoundException("Nenhuma Ala encontrada."));
     }
 }

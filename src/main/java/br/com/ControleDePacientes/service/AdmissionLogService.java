@@ -37,28 +37,15 @@ public class AdmissionLogService {
                     throw new IllegalStateException("Paciente já possui uma internação ativa.");
                 });
 
-        //Busca o paciente, leito e médico para internação (logo abaixo busca o leito também)
         PatientModel patient = this.patientService.findById(admissionRequest.getPatientId());
         BedModel bed = this.bedService.findById(admissionRequest.getBedId());
         DoctorModel doctor = this.doctorService.findById(admissionRequest.getDoctorId());
 
-        if (bed.getStatus() != BedStatus.AVAILABLE) {
-            throw new IllegalStateException("O leito " + bed.getCode() + " não está disponível.");
-        }
+        BedModel admissionBed = setAdmissionBedInfo(bed, patient);
+        this.bedService.save(admissionBed);
 
-        bed.setPatient(patient);
-        bed.setStatus(BedStatus.OCCUPIED);
-        this.bedService.save(bed);
-
-        AdmissionLogModel admissionLog = new AdmissionLogModel();
-        admissionLog.setPatient(patient);
-        admissionLog.setBed(bed);
-        admissionLog.setStatus(LogStatus.INTERNADO);
-        admissionLog.setDoctor(doctor);
-        admissionLog.setAdmissionDate(LocalDateTime.now());
-        admissionLog.setDischargeDate(null);
+        AdmissionLogModel admissionLog = setAdmssionLogInfo(new AdmissionLogModel(), patient, admissionBed, doctor);
         AdmissionLogModel savedLog = this.admissionLogRepository.save(admissionLog);
-
 
         // Histórico do primeiro médico responsável
         DoctorHistoryModel history = new DoctorHistoryModel();
@@ -71,7 +58,6 @@ public class AdmissionLogService {
     }
 
 
-    //Dar alta
     @Transactional
     public AdmissionResponseDTO dischargePatient(Long patientId){
         AdmissionLogModel activeAdmission = this.admissionLogRepository.findActiveAdmissionByPatientId(patientId)
@@ -89,7 +75,7 @@ public class AdmissionLogService {
         return new AdmissionResponseDTO(updatedAdmissionLog);
     }
 
-    //Transferir
+
     @Transactional
     public AdmissionResponseDTO transferPatient(TransferPatientDTO transferPatient){
         AdmissionLogModel activeAdmission = this.admissionLogRepository
@@ -187,5 +173,26 @@ public class AdmissionLogService {
         //Atualiza o doutor na log.
         admission.setDoctor(doctor);
         return new AdmissionResponseDTO(this.admissionLogRepository.save(admission));
+    }
+
+    private AdmissionLogModel setAdmssionLogInfo(AdmissionLogModel admissionLog, PatientModel patient, BedModel bed, DoctorModel doctor){
+        admissionLog.setPatient(patient);
+        admissionLog.setBed(bed);
+        admissionLog.setStatus(LogStatus.INTERNADO);
+        admissionLog.setDoctor(doctor);
+        admissionLog.setAdmissionDate(LocalDateTime.now());
+        admissionLog.setDischargeDate(null);
+
+        return admissionLog;
+    }
+
+    private BedModel setAdmissionBedInfo(BedModel bed, PatientModel patient){
+        if (bed.getStatus() != BedStatus.AVAILABLE) {
+            throw new IllegalStateException("O leito " + bed.getCode() + " não está disponível.");
+        }
+
+        bed.setPatient(patient);
+        bed.setStatus(BedStatus.OCCUPIED);
+        return bed;
     }
 }
