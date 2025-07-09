@@ -33,7 +33,7 @@ public class ExamModel {
     private PatientModel patient;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "doctor_name", nullable = false)
+    @JoinColumn(name = "doctor_id", nullable = false)
     private DoctorModel doctor;
 
 }

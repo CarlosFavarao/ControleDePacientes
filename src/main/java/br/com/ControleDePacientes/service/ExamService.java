@@ -6,9 +6,7 @@ import br.com.ControleDePacientes.enums.ExamType;
 import br.com.ControleDePacientes.model.DoctorModel;
 import br.com.ControleDePacientes.model.ExamModel;
 import br.com.ControleDePacientes.model.PatientModel;
-import br.com.ControleDePacientes.repository.DoctorRepository;
 import br.com.ControleDePacientes.repository.ExamRepository;
-import br.com.ControleDePacientes.repository.PatientRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,46 +47,58 @@ public class ExamService {
 
     @Transactional
     public ExamDto scheduleExam(ExamDto dto) {
-        PatientModel patientModel = patientService.findById(dto.getPatientId());
-        DoctorModel doctorModel = doctorService.findById(dto.getDoctorId());
+        PatientModel patient = patientService.findById(dto.getPatientId());
+        DoctorModel doctor = doctorService.findById(dto.getDoctorId());
 
-        boolean validInternment = admissionLogService.existsActiveInternmentByPatientIdAndDoctorId(
-                patientModel.getId(),
-                doctorModel.getId()
-        );
+        validateInternment(patient.getId(), doctor.getId());
+        validateDateTime(dto.getDateTime());
+        checkConflict(patient, dto.getDateTime());
 
-        if (!validInternment) {
-            throw new RuntimeException("Paciente não está internado com esse médico responsável.");
-        }
-
-        if (dto.getDateTime().isBefore(LocalDateTime.now())) {
-            throw new RuntimeException("Data e hora devem ser no futuro.");
-        }
-
-        boolean conflito = examRepository.existsByPatientAndDateTime(patientModel, dto.getDateTime());
-        if (conflito) {
-            throw new RuntimeException("Já existe um exame agendado nesse horário para esse paciente.");
-        }
-
-        ExamModel examModel = new ExamModel();
-        examModel.setExamName(dto.getExamName());
-        examModel.setDateTime(dto.getDateTime());
-        examModel.setType(ExamType.valueOf(dto.getType()));
-        examModel.setStatus(ExamStatus.SCHEDULED);
-        examModel.setPatient(patientModel);
-        examModel.setDoctor(doctorModel);
-
+        ExamModel examModel = createNewExameModel(dto, patient, doctor);
         examModel = examRepository.save(examModel);
 
-        ExamDto resultDto = new ExamDto();
-        resultDto.setExamName(examModel.getExamName());
-        resultDto.setDateTime(examModel.getDateTime());
-        resultDto.setType(examModel.getType().name());
-        resultDto.setStatus(examModel.getStatus().name());
-        resultDto.setNamePatient(examModel.getPatient().getName());
-        resultDto.setDoctorName(examModel.getDoctor().getNameDoctor());
+        return createNewObjectExamModel(examModel);
+    }
 
-        return resultDto;
+    private void validateInternment(Long patientId, Long doctorId){
+        boolean isInterned = admissionLogService.existsActiveInternmentByPatientIdAndDoctorId(patientId, doctorId);
+        if (!isInterned){
+            throw new RuntimeException("Paciente não está internado com esse médico.");
+        }
+    }
+
+    private void validateDateTime(LocalDateTime dateTime){
+        if(dateTime == null || dateTime.isBefore(LocalDateTime.now())){
+            throw new RuntimeException("Data e hora devem ser no futuro");
+        }
+    }
+
+    private void checkConflict(PatientModel patient, LocalDateTime dateTime){
+        if(examRepository.existsByPatientAndDateTime(patient, dateTime)){
+            throw new RuntimeException("Já existe um exame agendado para esse horário para esse paciente");
+        }
+    }
+
+    private ExamModel createNewExameModel(ExamDto dto, PatientModel patient, DoctorModel doctor){
+        ExamModel model = new ExamModel();
+        model.setExamName(dto.getExamName());
+        model.setDateTime(dto.getDateTime());
+        model.setType(ExamType.valueOf(dto.getType()));
+        model.setStatus(ExamStatus.SCHEDULED);
+        model.setPatient(patient);
+        model.setDoctor(doctor);
+        return model;
+    }
+
+    private ExamDto createNewObjectExamModel(ExamModel model){
+        ExamDto dto = new ExamDto();
+        dto.setExamName(model.getExamName());
+        dto.setDateTime(model.getDateTime());
+        dto.setType(model.getType().name());
+        dto.setStatus(model.getStatus().name());
+        dto.setNamePatient(model.getPatient().getName());
+        dto.setDoctorName(model.getDoctor().getName());
+        return dto;
     }
 
     @Transactional
@@ -107,7 +117,6 @@ public class ExamService {
         if (exams.isEmpty()) {
             throw new RuntimeException("O paciente não tem exame agendado.");
         }
-
 
         return exams.stream()
                 .map(ExamDto::from)
@@ -146,7 +155,5 @@ public class ExamService {
 
         return ExamDto.from(examModel);
     }
-
-
 }
 

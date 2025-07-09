@@ -25,6 +25,6 @@ public class AdmissionResponseDTO {
             this.bedId = log.getBed().getId();
             this.bedCode = log.getBed().getCode();
         }
-        this.doctorId = log.getDoctor().getId();
+        this.doctorId = log.getActiveDoctor().getId();
     }
 }

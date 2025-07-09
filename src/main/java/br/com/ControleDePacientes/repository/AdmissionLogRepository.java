@@ -102,11 +102,11 @@ public interface AdmissionLogRepository extends JpaRepository<AdmissionLogModel,
     @Query("SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END " +
             "FROM AdmissionLogModel a " +
             "WHERE a.patient.id = :patientId " +
-            "AND a.doctor.id = :doctorId " +
+            "AND a.activeDoctor.id = :doctorId " +
             "AND a.dischargeDate IS NULL")
     boolean existsActiveInternmentByPatientIdAndDoctorId(
             @Param("patientId") Long patientId,
-            @Param("doctorId") Long doctorId
-    );
+            @Param("doctorId") Long doctorId);
+
 
 }

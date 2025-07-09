@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DoctorService {
@@ -26,14 +27,15 @@ public class DoctorService {
 
     @Transactional(readOnly = true)
     public DoctorModel findById(Long id){
-        return doctorRepository.findById(id).orElseThrow(() -> new RuntimeException("Paciente não encontrado."));
+        return doctorRepository.findById(id).orElseThrow(() -> new RuntimeException("Médico não encontrado."));
     }
 
     @Transactional
     public DoctorModel updateDoctor(Long id, DoctorModel updateddoctor){
         DoctorModel doctor = this.findById(id);
+        doctor.setName(updateddoctor.getName());
         doctor.setSpecialty(updateddoctor.getSpecialty());
-
+        doctor.setCrm(updateddoctor.getCrm());
         return this.doctorRepository.save(doctor);
     }
 
@@ -43,6 +45,6 @@ public class DoctorService {
     }
 
     public DoctorModel findDoctorByCRM(Long crm) {
-        return this.doctorRepository.findDoctorByCRM(crm);
+        return this.doctorRepository.findDoctorByCRM(crm).orElseThrow(() -> new RuntimeException("CRM não encontrado."));
     }
 }

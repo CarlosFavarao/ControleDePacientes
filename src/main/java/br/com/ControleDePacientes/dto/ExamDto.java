@@ -25,9 +25,12 @@ public class ExamDto {
         dto.setType(examModel.getType().name());
         dto.setStatus(examModel.getStatus().name());
         dto.setNamePatient(examModel.getPatient().getName());
-        dto.setDoctorName(examModel.getDoctor().getNameDoctor());
+        dto.setDoctorName(examModel.getDoctor().getName());
+        dto.setPatientId(examModel.getPatient().getId());
+        dto.setDoctorId(examModel.getDoctor().getId());
         return dto;
     }
+
 }
 
 
