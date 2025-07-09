@@ -1,11 +1,8 @@
 package br.com.ControleDePacientes.repository;
 
-import br.com.ControleDePacientes.dto.PatientLocationDTO;
-import br.com.ControleDePacientes.model.PatientModel;
 import br.com.ControleDePacientes.model.VisitorModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -21,5 +18,6 @@ public interface VisitorRepository extends JpaRepository<VisitorModel, Long> {
             value = "SELECT * FROM visitors p order by p.id")
     List<VisitorModel> findAllOrderById();
 
+    boolean existsByDocument(String document);
 
 }

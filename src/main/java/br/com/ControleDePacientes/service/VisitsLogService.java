@@ -33,7 +33,7 @@ public class VisitsLogService {
 
 
     @Transactional(readOnly = true)
-    public VisitsLogModel findByVisitorId(Long visitorId) { //Encontrar log pelo id do visitante
+    public VisitsLogModel findByVisitorId(Long visitorId) {
         return this.visitsLogRepository.findByVisitorId(visitorId);
     }
 
@@ -43,19 +43,16 @@ public class VisitsLogService {
             throw new IllegalArgumentException("ID do Paciente e Id do Visitante são obrigatórios.");
         }
 
-        //Verifica se o paciente já está com visita ativa
         this.visitsLogRepository.findActiveVisitByPatientId(visitsLogRequestDTO.getPatientId())
                 .ifPresent(visit -> {
                     throw new IllegalStateException("Paciente já possui uma visita em andamento.");
                 });
 
-        //Busca se o visitante está visitando algum outro paciente
         this.visitsLogRepository.findActiveVisitByVisitorId(visitsLogRequestDTO.getVisitorId())
                 .ifPresent(visit -> {
                     throw new IllegalStateException("Visitante já está visitando outro paciente.");
                 });
 
-        //Busca o paciente com internação ativa e o visitante para registrar a visita
         VisitorModel visitor = visitorService.findById(visitsLogRequestDTO.getVisitorId());
         PatientModel patient = patientService.findById(visitsLogRequestDTO.getPatientId());
 
@@ -65,7 +62,7 @@ public class VisitsLogService {
 
         VisitsLogModel visitsLog = new VisitsLogModel();
         visitsLog.setEntryDate(LocalDateTime.now());
-        visitsLog.setExitDate(null); // A data de saída será definida quando a visita for finalizada
+        visitsLog.setExitDate(null);
         visitsLog.setPatient(patient);
         visitsLog.setVisitor(visitor);
 
@@ -94,13 +91,13 @@ public class VisitsLogService {
     }
 
     @Transactional(readOnly = true)
-    public List<VisitsLogResponseDTO> getVisitByVisitorId(Long visitorId) { //Encontrar log pelo id do visitante
+    public List<VisitsLogResponseDTO> getVisitByVisitorId(Long visitorId) {
         return this.visitsLogRepository.getVisitByVisitorId(visitorId)
                 .stream().map(VisitsLogResponseDTO::new).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public List<VisitsLogResponseDTO> getVisitByPatientId(Long patientId) { //Encontrar log pelo id do visitante
+    public List<VisitsLogResponseDTO> getVisitByPatientId(Long patientId) {
         return this.visitsLogRepository.getVisitByPatientId(patientId)
                 .stream().map(VisitsLogResponseDTO::new).collect(Collectors.toList());
     }

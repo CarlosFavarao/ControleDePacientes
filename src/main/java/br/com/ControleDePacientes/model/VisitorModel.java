@@ -17,7 +17,6 @@ public class VisitorModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
     @Column(nullable = false)
     private String name;
 

@@ -1,17 +1,28 @@
 package br.com.ControleDePacientes.validation;
 
+import br.com.ControleDePacientes.repository.VisitorRepository;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class DocumentValidator implements ConstraintValidator<ValidDocument, String> {
+
+    @Autowired
+    private VisitorRepository visitorRepository;
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
         if (value == null || value.trim().isEmpty()) return false;
 
-        String documento = value.replaceAll("[^\\d]", "");
+        String document = value.replaceAll("[^\\d]", "");
 
-        return isCPF(documento) || isRG(documento);
+        return isCPF(document) || isRG(document) || documentExists(document);
+    }
+    private boolean documentExists(String document) {
+        boolean documentExists = visitorRepository.existsByDocument(document);
+        return !documentExists;
     }
 
     private boolean isRG(String rg) {
