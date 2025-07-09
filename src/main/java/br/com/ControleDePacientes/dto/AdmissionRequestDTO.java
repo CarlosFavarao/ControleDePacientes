@@ -7,4 +7,5 @@ import lombok.Data;
 public class AdmissionRequestDTO {
     private Long patientId;
     private Long bedId;
+    private Long doctorId;
 }

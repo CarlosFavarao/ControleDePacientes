@@ -98,4 +98,15 @@ public interface AdmissionLogRepository extends JpaRepository<AdmissionLogModel,
             "order by " +
             "   al.admission_date desc;")
     Page<BedHistoryDTO>findBedAdmissionHistoryById(@Param ("bedId")Long BedId, Pageable pageable);
+
+    @Query("SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END " +
+            "FROM AdmissionLogModel a " +
+            "WHERE a.patient.id = :patientId " +
+            "AND a.doctor.id = :doctorId " +
+            "AND a.dischargeDate IS NULL")
+    boolean existsActiveInternmentByPatientIdAndDoctorId(
+            @Param("patientId") Long patientId,
+            @Param("doctorId") Long doctorId
+    );
+
 }

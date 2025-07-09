@@ -12,6 +12,7 @@ public class AdmissionResponseDTO {
     private String patientName;
     private Long bedId;
     private String bedCode;
+    private Long doctorId;
 
     public AdmissionResponseDTO(AdmissionLogModel log) {
         this.id = log.getId();
@@ -24,5 +25,6 @@ public class AdmissionResponseDTO {
             this.bedId = log.getBed().getId();
             this.bedCode = log.getBed().getCode();
         }
+        this.doctorId = log.getDoctor().getId();
     }
 }
