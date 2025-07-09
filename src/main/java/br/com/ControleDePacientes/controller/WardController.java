@@ -31,7 +31,7 @@ public class WardController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity findWardById(@PathVariable Long id) {
+    public ResponseEntity<WardResponseDTO> findWardById(@PathVariable Long id) {
         return ResponseEntity.ok(this.wardService.findWardById(id));
     }
 
