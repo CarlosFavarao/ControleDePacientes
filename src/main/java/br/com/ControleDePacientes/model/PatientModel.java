@@ -20,9 +20,4 @@ public class PatientModel {
     @Column(nullable = false)
     private String name;
 
-    @Column
-    private LocalDateTime Admission;
-
-    @ManyToOne
-    private DoctorModel responsibleDoctor;
 }

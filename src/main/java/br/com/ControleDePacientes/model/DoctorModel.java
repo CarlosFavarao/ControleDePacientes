@@ -16,6 +16,8 @@ public class DoctorModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String nameDoctor;
+
     @Column(nullable = false, unique = true, length = 50)
     private String crm;
 

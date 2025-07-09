@@ -2,6 +2,7 @@ package br.com.ControleDePacientes.service;
 
 import br.com.ControleDePacientes.dto.ExamDto;
 import br.com.ControleDePacientes.enums.ExamStatus;
+import br.com.ControleDePacientes.enums.ExamType;
 import br.com.ControleDePacientes.model.DoctorModel;
 import br.com.ControleDePacientes.model.ExamModel;
 import br.com.ControleDePacientes.model.PatientModel;
@@ -24,27 +25,41 @@ public class ExamService {
     private ExamRepository examRepository;
 
     @Autowired
-    private PatientRepository patientRepository;
+    private PatientService patientService;
 
     @Autowired
-    private DoctorRepository doctorRepository;
+    private DoctorService doctorService;
+
+    @Autowired
+    private AdmissionLogService admissionLogService;
+
 
     @Transactional
-    public void ScheduleExam(ExamDto dto) {
-        PatientModel patientModel = patientRepository.findById(dto.getPatientId())
-                .orElseThrow(() -> new RuntimeException("Paciente não encontrado."));
+    public ExamModel findById(Long id) {
+        return examRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Exame não encontrado com id " + id));
+    }
 
-        DoctorModel doctorModel = doctorRepository.findById(dto.getDoctorId())
-                .orElseThrow(() -> new RuntimeException("Doutor não encontrado."));
+    @Transactional
+    public ExamDto findByIdDto(Long id) {
+        ExamModel exam = findById(id);
+        return ExamDto.from(exam);
+    }
 
-        if (patientModel.getAdmission() == null) {
-            throw new RuntimeException("Paciente não está internado. ");
+
+    @Transactional
+    public ExamDto scheduleExam(ExamDto dto) {
+        PatientModel patientModel = patientService.findById(dto.getPatientId());
+        DoctorModel doctorModel = doctorService.findById(dto.getDoctorId());
+
+        boolean validInternment = admissionLogService.existsActiveInternmentByPatientIdAndDoctorId(
+                patientModel.getId(),
+                doctorModel.getId()
+        );
+
+        if (!validInternment) {
+            throw new RuntimeException("Paciente não está internado com esse médico responsável.");
         }
-
-        if (!patientModel.getResponsibleDoctor().getId().equals(doctorModel.getId())) {
-            throw new RuntimeException("Médico solicitante não é o responsável pelo paciente.");
-        }
-        Long doctorId = patientModel.getResponsibleDoctor().getId();
 
         if (dto.getDateTime().isBefore(LocalDateTime.now())) {
             throw new RuntimeException("Data e hora devem ser no futuro.");
@@ -52,49 +67,86 @@ public class ExamService {
 
         boolean conflito = examRepository.existsByPatientAndDateTime(patientModel, dto.getDateTime());
         if (conflito) {
-            throw new RuntimeException("Já existe um exame agendao nesse horario para esse paciente");
+            throw new RuntimeException("Já existe um exame agendado nesse horário para esse paciente.");
         }
 
         ExamModel examModel = new ExamModel();
         examModel.setExamName(dto.getExamName());
         examModel.setDateTime(dto.getDateTime());
-        examModel.setType(dto.getType());
+        examModel.setType(ExamType.valueOf(dto.getType()));
         examModel.setStatus(ExamStatus.SCHEDULED);
         examModel.setPatient(patientModel);
         examModel.setDoctor(doctorModel);
 
-        examRepository.save(examModel);
+        examModel = examRepository.save(examModel);
+
+        ExamDto resultDto = new ExamDto();
+        resultDto.setExamName(examModel.getExamName());
+        resultDto.setDateTime(examModel.getDateTime());
+        resultDto.setType(examModel.getType().name());
+        resultDto.setStatus(examModel.getStatus().name());
+        resultDto.setNamePatient(examModel.getPatient().getName());
+        resultDto.setDoctorName(examModel.getDoctor().getNameDoctor());
+
+        return resultDto;
     }
 
     @Transactional
     public void deleteExam(Long id) {
-        ExamModel exam = examRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Exame não encontrado com id " + id));
-
+        ExamModel exam = findById(id);
         examRepository.delete(exam);
     }
 
+
     @Transactional
     public List<ExamDto> listExamsByPatients(Long patientId) {
-        PatientModel patient = patientRepository.findById(patientId)
-                .orElseThrow(() -> new RuntimeException("Paciente não encontrado."));
+        PatientModel patient = patientService.findById(patientId);
 
-        List<ExamModel> exam = examRepository.findByPatient(patient);
+        List<ExamModel> exams = examRepository.findByPatient(patient);
 
-        if (exam.isEmpty()) {
-        throw new RuntimeException("O paciente não tem exame agendado.");
+        if (exams.isEmpty()) {
+            throw new RuntimeException("O paciente não tem exame agendado.");
         }
 
-        return exam.stream().map(exams -> {
-            ExamDto dto = new ExamDto();
-            dto.setExamName(exams.getExamName());
-            dto.setDateTime(exams.getDateTime());
-            dto.setType(exams.getType());
-            dto.setStatus(exams.getStatus());
-            dto.setPatientId(exams.getPatient().getId());
-            dto.setDoctorId(exams.getDoctor().getId());
-            return dto;
-        }).collect(Collectors.toList());
+
+        return exams.stream()
+                .map(ExamDto::from)
+                .collect(Collectors.toList());
     }
 
+    @Transactional
+    public ExamDto updateExam(Long id, ExamDto dto) {
+        ExamModel examModel = findById(id);
+
+        examModel.setExamName(dto.getExamName());
+
+        try {
+            examModel.setType(ExamType.valueOf(dto.getType().toUpperCase()));
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Tipo de exame inválido: " + dto.getType());
+        }
+
+        try {
+            examModel.setStatus(ExamStatus.valueOf(dto.getStatus().toUpperCase()));
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Status de exame inválido: " + dto.getStatus());
+        }
+
+        if (dto.getDateTime().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("Data e hora devem ser no futuro.");
+        }
+        examModel.setDateTime(dto.getDateTime());
+
+        boolean conflito = examRepository.existsByPatientAndDateTime(examModel.getPatient(), dto.getDateTime());
+        if (conflito && !examModel.getDateTime().equals(dto.getDateTime())) {
+            throw new RuntimeException("Já existe um exame agendado nesse horário para esse paciente.");
+        }
+
+        examModel = examRepository.save(examModel);
+
+        return ExamDto.from(examModel);
+    }
+
+
 }
+

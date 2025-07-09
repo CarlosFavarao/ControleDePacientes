@@ -29,11 +29,11 @@ public class ExamModel {
     @Enumerated(EnumType.STRING)
     private ExamStatus status;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private PatientModel patient;
 
-    @ManyToOne
-    @JoinColumn(name = "doctor_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "doctor_name", nullable = false)
     private DoctorModel doctor;
 
 }
