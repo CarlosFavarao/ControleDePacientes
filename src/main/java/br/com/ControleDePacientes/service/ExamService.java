@@ -75,7 +75,7 @@ public class ExamService {
 
     private void checkConflict(PatientModel patient, LocalDateTime dateTime){
         if(examRepository.existsByPatientAndDateTime(patient, dateTime)){
-            throw new RuntimeException("Já existe um exame agendado para esse horário para esse paciente");
+            throw new RuntimeException("Já existe um exame agendado nesse horário para este paciente.");
         }
     }
 
@@ -107,7 +107,6 @@ public class ExamService {
         examRepository.delete(exam);
     }
 
-
     @Transactional
     public List<ExamDto> listExamsByPatients(Long patientId) {
         PatientModel patient = patientService.findById(patientId);
@@ -128,32 +127,30 @@ public class ExamService {
         ExamModel examModel = findById(id);
 
         examModel.setExamName(dto.getExamName());
+        examModel.setType(validateAndGetType(dto.getType()));
+        examModel.setStatus(validateAndGetStatus(dto.getStatus()));
+        validateDateTime(dto.getDateTime());
 
-        try {
-            examModel.setType(ExamType.valueOf(dto.getType().toUpperCase()));
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Tipo de exame inválido: " + dto.getType());
-        }
-
-        try {
-            examModel.setStatus(ExamStatus.valueOf(dto.getStatus().toUpperCase()));
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Status de exame inválido: " + dto.getStatus());
-        }
-
-        if (dto.getDateTime().isBefore(LocalDateTime.now())) {
-            throw new RuntimeException("Data e hora devem ser no futuro.");
-        }
         examModel.setDateTime(dto.getDateTime());
-
-        boolean conflito = examRepository.existsByPatientAndDateTime(examModel.getPatient(), dto.getDateTime());
-        if (conflito && !examModel.getDateTime().equals(dto.getDateTime())) {
-            throw new RuntimeException("Já existe um exame agendado nesse horário para esse paciente.");
-        }
-
         examModel = examRepository.save(examModel);
 
-        return ExamDto.from(examModel);
+        return createNewObjectExamModel(examModel);
+    }
+
+    private ExamType validateAndGetType(String type) {
+        try {
+            return ExamType.valueOf(type.trim().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Tipo de exame inválido: " + type);
+        }
+    }
+
+    private ExamStatus validateAndGetStatus(String status) {
+        try {
+            return ExamStatus.valueOf(status.trim().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Status de exame inválido: " + status);
+        }
     }
 }
 

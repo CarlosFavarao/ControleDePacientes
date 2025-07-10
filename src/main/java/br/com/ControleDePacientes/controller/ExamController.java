@@ -23,9 +23,9 @@ public class ExamController {
         return ResponseEntity.status(HttpStatus.CREATED).body(scheduledExam);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ExamDto> updateExam(@PathVariable Long id, @RequestBody @Validated ExamDto examDto) {
-        ExamDto updatedExam = examService.updateExam(id, examDto);
+    @PutMapping("/update/{id}")
+    public ResponseEntity<ExamDto> updateExam(@PathVariable Long id, @RequestBody ExamDto dto) {
+        ExamDto updatedExam = examService.updateExam(id, dto);
         return ResponseEntity.ok(updatedExam);
     }
 
