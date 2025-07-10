@@ -18,23 +18,23 @@ public class PatientController {
     private PatientService patientService;
 
     @PostMapping
-    public PatientModel savePatient(@RequestBody PatientModel patient){
-        return this.patientService.savePatient(patient);
+    public ResponseEntity<PatientModel> savePatient(@RequestBody PatientModel patient){
+        return ResponseEntity.ok(this.patientService.savePatient(patient));
     }
 
     @PutMapping("/{id}")
-    public PatientModel updatePatient(@PathVariable Long id, @RequestBody PatientModel patient){
-        return this.patientService.updatePatient(id, patient);
+    public ResponseEntity<PatientModel> updatePatient(@PathVariable Long id, @RequestBody PatientModel patient){
+        return ResponseEntity.ok(this.patientService.updatePatient(id, patient));
     }
 
     @GetMapping("/search/{name}")
-    public List<PatientModel> findPatientByName(@PathVariable String name){
-        return this.patientService.findByName(name);
+    public ResponseEntity<List<PatientModel>> findPatientByName(@PathVariable String name){
+        return ResponseEntity.ok(this.patientService.findByName(name));
     }
 
     @GetMapping
-    public List<PatientModel> listAllPatients(){
-        return this.patientService.listPatients();
+    public ResponseEntity<List<PatientModel>> listAllPatients(){
+        return ResponseEntity.ok(this.patientService.listPatients());
     }
 
     @GetMapping("/location/{patientId}") //Encontrar
@@ -44,7 +44,8 @@ public class PatientController {
     }
 
     @DeleteMapping("/{id}")
-    public void deletePatient(Long id){
+    public ResponseEntity deletePatient(Long id){
         this.patientService.deletePatient(id);
+        return ResponseEntity.noContent().build();
     }
 }

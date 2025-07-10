@@ -22,8 +22,8 @@ public class RoomController {
     }
 
     @GetMapping
-    public List<RoomResponseDTO> findAllRooms(){
-        return this.roomService.findAllRooms();
+    public ResponseEntity<List<RoomResponseDTO>> findAllRooms(){
+        return ResponseEntity.ok(this.roomService.findAllRooms());
     }
 
     @GetMapping("/{id}")

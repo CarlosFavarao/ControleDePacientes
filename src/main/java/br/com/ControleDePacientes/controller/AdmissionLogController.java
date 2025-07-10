@@ -28,13 +28,13 @@ public class AdmissionLogController {
     }
 
     @GetMapping("/history/patient/{patientId}") //Exibir histórico do paciente
-    public Page<LogDTO> getAdmissionHistoryByPatientId(@PathVariable Long patientId, Pageable pageable){
-        return this.admissionLogService.getAdmissionHistoryByPatientId(patientId, pageable);
+    public ResponseEntity<Page<LogDTO>> getAdmissionHistoryByPatientId(@PathVariable Long patientId, Pageable pageable){
+        return ResponseEntity.ok(this.admissionLogService.getAdmissionHistoryByPatientId(patientId, pageable));
     }
 
     @GetMapping("/history/bed/{bedId}")
-    public Page<BedHistoryDTO> getBedAdmissionHistory(@PathVariable Long bedId, Pageable pageable) {
-        return this.admissionLogService.getBedAdmissionHistory(bedId, pageable);
+    public ResponseEntity<Page<BedHistoryDTO>> getBedAdmissionHistory(@PathVariable Long bedId, Pageable pageable) {
+        return ResponseEntity.ok(this.admissionLogService.getBedAdmissionHistory(bedId, pageable));
     }
 
     @PutMapping("/discharge/{patientId}") //Dar alta
