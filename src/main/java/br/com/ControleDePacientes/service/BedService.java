@@ -5,6 +5,7 @@ import br.com.ControleDePacientes.dto.BedResponseDTO;
 import br.com.ControleDePacientes.model.BedModel;
 import br.com.ControleDePacientes.projections.AvailableBedProjection;
 import br.com.ControleDePacientes.repository.BedRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -66,5 +67,11 @@ public class BedService {
         Page<AvailableBedProjection> projectionPage = this.bedRepository.findAvailableBedsByHospitalIdAndSpecialty(hospitalId, specialtyName, pageable);
 
         return projectionPage.map(AvailableBedDTO::fromProjection);
+    }
+
+    @Transactional(readOnly = true)
+    public Long findWardByBedId(Long bedId){
+        return this.bedRepository.findWardIdByBedId(bedId)
+                .orElseThrow(() -> new EntityNotFoundException("Nenhuma Ala encontrada."));
     }
 }

@@ -1,6 +1,7 @@
 package br.com.ControleDePacientes.model;
 
 import br.com.ControleDePacientes.enums.BedStatus;
+import br.com.ControleDePacientes.enums.BedType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,6 +23,10 @@ public class BedModel {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
     private BedStatus status;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "bed_type", length = 30)
+    private BedType bedType;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id", nullable = false)

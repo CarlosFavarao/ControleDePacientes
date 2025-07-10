@@ -19,33 +19,34 @@ public class HospitalController {
     @Autowired HospitalService hospitalService;
 
     @PostMapping
-    public HospitalModel saveHospital(@RequestBody HospitalModel hospital){
-        return this.hospitalService.saveHospital(hospital);
+    public ResponseEntity<HospitalModel> saveHospital(@RequestBody HospitalModel hospital){
+        return ResponseEntity.ok(this.hospitalService.saveHospital(hospital));
     }
 
     @PutMapping("/{id}")
-    public HospitalModel updateHospital(@PathVariable Long id, @RequestBody HospitalModel hospital){
-        return this.hospitalService.updateHospital(id, hospital);
+    public ResponseEntity<HospitalModel> updateHospital(@PathVariable Long id, @RequestBody HospitalModel hospital){
+        return ResponseEntity.ok(this.hospitalService.updateHospital(id, hospital));
     }
 
     @GetMapping
-    public List<HospitalModel> listHospitals(){
-        return this.hospitalService.listHospitals();
+    public ResponseEntity<List<HospitalModel>> listHospitals(){
+        return ResponseEntity.ok(this.hospitalService.listHospitals());
     }
 
     @GetMapping("/search/{name}")
-    public List<HospitalModel> findHospitalByName(@PathVariable String name){
-        return this.hospitalService.findHospitalByName(name);
+    public ResponseEntity<List<HospitalModel>> findHospitalByName(@PathVariable String name){
+        return ResponseEntity.ok(this.hospitalService.findHospitalByName(name));
     }
 
     @GetMapping("/id/{id}")
-    public HospitalModel findHospitalById(@PathVariable Long id){
-        return this.hospitalService.findHospitalById(id);
+    public ResponseEntity<HospitalModel> findHospitalById(@PathVariable Long id){
+        return ResponseEntity.ok(this.hospitalService.findHospitalById(id));
     }
 
     @DeleteMapping("/{id}")
-    public void deleteHospital(@PathVariable Long id){
+    public ResponseEntity deleteHospital(@PathVariable Long id){
         this.hospitalService.deleteHospital(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

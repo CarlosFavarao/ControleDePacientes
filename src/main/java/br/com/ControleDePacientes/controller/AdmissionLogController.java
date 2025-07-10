@@ -28,17 +28,27 @@ public class AdmissionLogController {
     }
 
     @GetMapping("/history/patient/{patientId}") //Exibir histórico do paciente
-    public Page<LogDTO> getAdmissionHistoryByPatientId(@PathVariable Long patientId, Pageable pageable){
-        return this.admissionLogService.getAdmissionHistoryByPatientId(patientId, pageable);
+    public ResponseEntity<Page<LogDTO>> getAdmissionHistoryByPatientId(@PathVariable Long patientId, Pageable pageable){
+        return ResponseEntity.ok(this.admissionLogService.getAdmissionHistoryByPatientId(patientId, pageable));
     }
 
     @GetMapping("/history/bed/{bedId}")
-    public Page<BedHistoryDTO> getBedAdmissionHistory(@PathVariable Long bedId, Pageable pageable) {
-        return this.admissionLogService.getBedAdmissionHistory(bedId, pageable);
+    public ResponseEntity<Page<BedHistoryDTO>> getBedAdmissionHistory(@PathVariable Long bedId, Pageable pageable) {
+        return ResponseEntity.ok(this.admissionLogService.getBedAdmissionHistory(bedId, pageable));
     }
 
     @PutMapping("/discharge/{patientId}") //Dar alta
     public ResponseEntity<AdmissionResponseDTO> dischargePatient(@PathVariable Long patientId){
         return ResponseEntity.ok(this.admissionLogService.dischargePatient(patientId));
+    }
+
+    @PutMapping("/transfer")
+    public ResponseEntity<AdmissionResponseDTO> transferPatient(@RequestBody TransferPatientDTO patient){
+        return ResponseEntity.ok(this.admissionLogService.transferPatient(patient));
+    }
+
+    @PutMapping("/changedoctor/{admissionId}/{doctorId}")
+    public ResponseEntity<AdmissionResponseDTO> changeDoctor(@PathVariable Long admissionId, @PathVariable Long doctorId) {
+        return ResponseEntity.ok(this.admissionLogService.changeDoctor(admissionId, doctorId));
     }
 }

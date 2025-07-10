@@ -4,28 +4,22 @@ import br.com.ControleDePacientes.enums.SpecialtyEnum;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.HashSet;
-import java.util.Set;
-
 @Entity
-@Table(name = "wards")
+@Table(name = "doctor")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class WardModel {
+@EqualsAndHashCode(of = "id")
+public class DoctorModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, unique = true, length = 50)
+    private String crm;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private SpecialtyEnum specialty;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "hospital_id", nullable = false)
-    private HospitalModel hospital;
-
-    @OneToMany(mappedBy = "ward", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<RoomModel> rooms = new HashSet<>();
 }

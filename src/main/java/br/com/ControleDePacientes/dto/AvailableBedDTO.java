@@ -1,5 +1,6 @@
 package br.com.ControleDePacientes.dto;
 
+import br.com.ControleDePacientes.enums.BedType;
 import br.com.ControleDePacientes.enums.SpecialtyEnum;
 import br.com.ControleDePacientes.projections.AvailableBedProjection;
 import lombok.AllArgsConstructor;
@@ -17,6 +18,7 @@ public class AvailableBedDTO {
     private String bedCode;
     private Long roomId;
     private String roomCode;
+    private BedType bedType;
 
     public static AvailableBedDTO fromProjection(AvailableBedProjection projection) {
         return new AvailableBedDTO(
@@ -26,7 +28,8 @@ public class AvailableBedDTO {
                 projection.getBedId(),
                 projection.getBedCode(),
                 projection.getRoomId(),
-                projection.getRoomCode()
+                projection.getRoomCode(),
+                projection.getBedType()
         );
     }
 }
