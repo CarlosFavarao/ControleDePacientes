@@ -40,7 +40,7 @@ public class AdmissionLogService {
         BedModel admissionBed = setAdmissionBedInfo(bed, patient);
         this.bedService.save(admissionBed);
 
-        AdmissionLogModel admissionLog = setAdmssionLogInfo(new AdmissionLogModel(), patient, admissionBed, doctor);
+        AdmissionLogModel admissionLog = setAdmissionLogInfo(new AdmissionLogModel(), patient, admissionBed, doctor);
         AdmissionLogModel savedLog = this.admissionLogRepository.save(admissionLog);
 
         // Histórico do primeiro médico responsável
@@ -53,7 +53,6 @@ public class AdmissionLogService {
         return new AdmissionResponseDTO(savedLog);
     }
 
-
     @Transactional
     public AdmissionResponseDTO dischargePatient(Long patientId){
         AdmissionLogModel activeAdmission = this.findActiveAdmissionByPatientId(patientId, true);
@@ -63,7 +62,6 @@ public class AdmissionLogService {
 
         return new AdmissionResponseDTO(updatedAdmissionLog);
     }
-
 
     @Transactional
     public AdmissionResponseDTO transferPatient(TransferPatientDTO transferPatient){
@@ -145,7 +143,7 @@ public class AdmissionLogService {
         }
     }
 
-    private AdmissionLogModel setAdmssionLogInfo(AdmissionLogModel admissionLog, PatientModel patient, BedModel bed, DoctorModel doctor){
+    private AdmissionLogModel setAdmissionLogInfo(AdmissionLogModel admissionLog, PatientModel patient, BedModel bed, DoctorModel doctor){
         admissionLog.setPatient(patient);
         admissionLog.setBed(bed);
         admissionLog.setStatus(LogStatus.INTERNADO);
